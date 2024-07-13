@@ -28,7 +28,7 @@ const NavActions = () => {
   };
 
   return (
-    <div className="flex items-center gap-3 md:w-full">
+    <div className="flex items-center justify-end gap-3">
       <SearchBox />
 
       <div>
