@@ -13,7 +13,7 @@ const FTInput : React.ComponentType<InputProps> = extendVariants(Input, {
           "!bg-white !rounded-lg shadow-none !border !border-slate-200 !transition",
           "hover:bg-white hover:ring hover:ring-2 hover:ring-offset-2 hover:ring-indigo-600",
           "group-data-[focused=true]:!bg-white group-data-[focus=true]:ring group-data-[focus=true]:ring-2 group-data-[focus=true]:ring-indigo-600 group-data-[focus=true]:ring-offset-2",
-          "!cursor-text mb-1 mt-0",
+          "!cursor-text mt-0",
         ],
         helperWrapper: "!mt-4",
       },
