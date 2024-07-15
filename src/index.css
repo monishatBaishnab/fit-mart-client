@@ -11,7 +11,25 @@
 
 @layer utilities {
   .container {
-    @apply max-w-screen-xl mx-auto p-10;
+    @apply max-w-screen-xl mx-auto px-10 py-16;
   }
 }
 
+.multi-range-slider .bar-inner{
+  @apply !bg-indigo-600 !shadow-none !border-0
+}
+.multi-range-slider .thumb::before{
+  @apply !transition-all !shadow-none !border-white !border-3 hover:ring hover:ring-indigo-400 !bg-indigo-600
+}
+
+.multi-range-slider .bar-left,.bar-right{
+@apply !bg-slate-200 !shadow-none
+}
+
+.multi-range-slider .thumb .caption *{
+  @apply hidden static;
+}
+
+.multi-range-slider .label{
+  @apply !text-slate-500 !text-base
+}

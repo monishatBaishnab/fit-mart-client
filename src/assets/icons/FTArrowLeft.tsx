@@ -1,11 +1,11 @@
-const FTSearch = ({
+const FTArrowLeft = ({
   classNames,
 }: {
-  classNames?: { svg?: string; path?: string };
+  classNames?: { svg?: string; path?: string; clipPath?: string };
 }) => {
   return (
     <svg
-      className={classNames?.svg}
+    className={classNames?.svg}
       width="24"
       height="24"
       viewBox="0 0 24 24"
@@ -13,8 +13,8 @@ const FTSearch = ({
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        className={classNames?.path}
-        d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
+      className={classNames?.path}
+        d="M19 12H5M5 12L12 19M5 12L12 5"
         stroke="#030515"
         strokeWidth="2"
         strokeLinecap="round"
@@ -24,4 +24,4 @@ const FTSearch = ({
   );
 };
 
-export default FTSearch;
+export default FTArrowLeft;

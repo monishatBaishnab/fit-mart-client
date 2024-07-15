@@ -32,7 +32,7 @@ const NavActions = () => {
       <SearchBox />
 
       <div>
-        <FTButton color="secondary" isIconOnly className="group" disableRipple>
+        <FTButton size='lg'color="secondary" isIconOnly className="group" disableRipple>
           <FTCart
             classNames={{
               path: "stroke-slate-800 transition-all group-hover:stroke-indigo-600",
@@ -41,7 +41,7 @@ const NavActions = () => {
         </FTButton>
       </div>
       <div>
-        <FTButton color="secondary" isIconOnly className="group" disableRipple>
+        <FTButton size='lg'color="secondary" isIconOnly className="group" disableRipple>
           <FTUser
             classNames={{
               path: "stroke-slate-800 transition-all group-hover:stroke-indigo-600",

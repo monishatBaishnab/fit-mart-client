@@ -1,17 +1,15 @@
-import { useState } from "react";
 import FTSearch from "../../../../assets/icons/FTSearch";
 import FTButton from "../../../ui/FTButton";
 const SearchBox = () => {
-  const [showSearchBox, setShowSearchBox] = useState(false);
-  console.log(showSearchBox);
+
   return (
     <div className="">
       <FTButton
+        size="lg"
         color="secondary"
         isIconOnly
         className="group"
         disableRipple
-        onClick={() => setShowSearchBox(true)}
       >
         <FTSearch
           classNames={{
@@ -19,7 +17,6 @@ const SearchBox = () => {
           }}
         />
       </FTButton>
-     
     </div>
   );
 };

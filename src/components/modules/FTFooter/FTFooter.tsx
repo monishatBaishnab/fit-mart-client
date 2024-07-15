@@ -36,28 +36,28 @@ const FTFooter = () => {
             Stay in touch
           </h5>
           <div className="flex items-center justify-center gap-2 mt-5">
-            <FTButton isIconOnly color="secondary" className="group">
+            <FTButton size='lg'isIconOnly color="secondary" className="group">
               <FTFacebook
                 classNames={{
                   path: "stroke-slate-500 group-hover:stroke-indigo-600",
                 }}
               />
             </FTButton>
-            <FTButton isIconOnly color="secondary" className="group">
+            <FTButton size='lg'isIconOnly color="secondary" className="group">
               <FTInstagram
                 classNames={{
                   path: "stroke-slate-500 group-hover:stroke-indigo-600",
                 }}
               />
             </FTButton>
-            <FTButton isIconOnly color="secondary" className="group">
+            <FTButton size='lg'isIconOnly color="secondary" className="group">
               <FTTwitter
                 classNames={{
                   path: "stroke-slate-500 group-hover:stroke-indigo-600",
                 }}
               />
             </FTButton>
-            <FTButton isIconOnly color="secondary" className="group">
+            <FTButton size='lg'isIconOnly color="secondary" className="group">
               <FTMail
                 classNames={{
                   path: "stroke-slate-500 group-hover:stroke-indigo-600",
