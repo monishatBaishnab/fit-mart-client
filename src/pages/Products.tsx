@@ -1,39 +1,23 @@
 import {
   Accordion,
   AccordionItem,
-  BreadcrumbItem,
-  Breadcrumbs,
   Checkbox,
   CheckboxGroup,
   Radio,
   RadioGroup,
 } from "@nextui-org/react";
-import { useLocation, useNavigate } from "react-router-dom";
 import FTGridProductCard from "../components/ui/FTGridProductCard";
 import MultiRangeSlider, { ChangeResult } from "multi-range-slider-react";
 import { useState } from "react";
 import FTButton from "../components/ui/FTButton";
 import categoriesData from "../assets/data/categories";
+import FTBreadcrumbs from "../components/ui/FTBreadcrumbs";
 
 const Products = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(4000);
   const [categories, setCategories] = useState<string[]>(["all"]);
   const [sort, setSort] = useState<string>("ascending");
-  const navigate = useNavigate();
-  const location = useLocation();
-  const routePath = location?.pathname?.substring(1);
-  let queryPath: string = "";
-  const searchString = location?.search ?? "";
-
-  if (searchString) {
-    const keyValuePair = searchString?.substring(1).split("&");
-    keyValuePair?.map((pair) => {
-      if (pair?.split("=")[0] === "category") {
-        queryPath = pair?.split("=")[1];
-      }
-    });
-  }
 
   const handleClearFilter = () => {
     setMinPrice(0);
@@ -42,7 +26,7 @@ const Products = () => {
     setSort("ascending");
   };
 
-  const handleSelectAllCategories = (isChecked:boolean) => {
+  const handleSelectAllCategories = (isChecked: boolean) => {
     if (isChecked) {
       setCategories(categoriesData?.map((categoryData) => categoryData?.key));
     } else {
@@ -52,27 +36,8 @@ const Products = () => {
 
   return (
     <div>
-      <div className="bg-indigo-50">
-        <div className="container !py-8">
-          <Breadcrumbs>
-            <BreadcrumbItem onPress={() => navigate("/")}>Home</BreadcrumbItem>
-            {routePath && (
-              <BreadcrumbItem
-                onPress={() => {
-                  queryPath && navigate("/products");
-                }}
-              >
-                {routePath[0].toUpperCase() + routePath?.substring(1)}
-              </BreadcrumbItem>
-            )}
-            {queryPath && (
-              <BreadcrumbItem>
-                {queryPath[0].toUpperCase() + queryPath?.substring(1)}
-              </BreadcrumbItem>
-            )}
-          </Breadcrumbs>
-        </div>
-      </div>
+      <FTBreadcrumbs />
+
       <div className="container !pt-5 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {/* Product filter part */}
         <div className="col-span-1 hidden md:block">
@@ -92,7 +57,7 @@ const Products = () => {
             >
               <AccordionItem key="1" aria-label="Category" title="Category">
                 <Checkbox
-                className="mb-[1px]"
+                  className="mb-[1px]"
                   value="all"
                   onValueChange={(isChecked) =>
                     handleSelectAllCategories(isChecked)

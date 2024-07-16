@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import Home from "../pages/Home";
 import Products from "../pages/Products";
+import ProductsDetails from "../pages/ProductsDetails";
 
 export const navLinks = [
     {
@@ -38,6 +39,10 @@ export const routes = createBrowserRouter([
             {
                 path: '/products',
                 element: <Products />
+            },
+            {
+                path: '/products/:id',
+                element: <ProductsDetails />
             }
         ]
     }
