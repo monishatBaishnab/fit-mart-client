@@ -18,14 +18,39 @@ import formInputs from "../assets/data/formInputs";
 import FTAlert from "../assets/icons/FTAlert";
 import FTInputFile from "../components/ui/FTInputFile";
 import FTImage from "../assets/icons/FTImage";
+import { ChangeEvent, FormEvent, useState } from "react";
 
+const initialProduct = {
+  specifications: {
+    dimensions: "",
+    weight: "",
+    material: "",
+  },
+  manufacturerDetails: {},
+  name: "",
+  brand: "",
+  price: "",
+  stockQuantity: "",
+  description: "",
+  category: "",
+  images: "",
+  rating: "",
+  features: [],
+  warranty: "",
+  returnPolicy: "",
+};
 
 const ProductManagement = () => {
   const { onClose, onOpen, isOpen } = useDisclosure();
-  const handleSubmit = () => {
+  const [product, setProduct] = useState(initialProduct);
+  console.log(product, setProduct);
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    console.log(e);
+  };
 
-  }
-
+  const handleSave = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
 
   return (
     <div>
@@ -42,6 +67,7 @@ const ProductManagement = () => {
             Create Product
           </FTButton>
         </div>
+
         <ProductsTable />
       </div>
 
@@ -59,7 +85,7 @@ const ProductManagement = () => {
       >
         <ModalContent>
           <ModalBody>
-            <form>
+            <form onSubmit={handleSave}>
               <div className="flex items-center justify-between p-6 border-b border-b-slate-200">
                 <h3 className="text-3xl font-semibold">Create Product</h3>
                 <div className="flex items-center gap-2">
@@ -79,6 +105,7 @@ const ProductManagement = () => {
                   return formInput?.type === "FTSelect" ? (
                     <div key={formInput?.props?.name}>
                       <FTSelect
+                        onChange={(e) => handleChange(e)}
                         name={formInput?.props?.name}
                         placeholder={formInput?.props?.placeholder}
                         label={formInput?.props?.label}
@@ -93,6 +120,7 @@ const ProductManagement = () => {
                   ) : formInput?.type === "FTInput" ? (
                     <div key={formInput?.props?.name}>
                       <FTInput
+                        onChange={(e) => handleChange(e)}
                         name={formInput?.props?.name}
                         placeholder={formInput?.props?.placeholder}
                         label={formInput?.props?.label}
@@ -101,6 +129,7 @@ const ProductManagement = () => {
                   ) : (
                     <div key={formInput?.props?.name} className={"col-span-2"}>
                       <FTTextArea
+                        onChange={(e) => handleChange(e)}
                         name={formInput?.props?.name}
                         placeholder={formInput?.props?.placeholder}
                         label={formInput?.props?.label}
@@ -132,8 +161,10 @@ const ProductManagement = () => {
                 <FTButton
                   onPress={onClose}
                   type="button"
-                  startContent={
-                    <FTClose classNames={{ path: "stroke-slate-700", svg: 'w-6 h-6' }} />
+                  endContent={
+                    <FTClose
+                      classNames={{ path: "stroke-slate-700", svg: "w-6 h-6" }}
+                    />
                   }
                   size="lg"
                   color="secondary"
@@ -142,9 +173,7 @@ const ProductManagement = () => {
                 </FTButton>
                 <FTButton
                   type="button"
-                  startContent={
-                    <FTSave classNames={{ path: "stroke-white" }} />
-                  }
+                  endContent={<FTSave classNames={{ path: "stroke-white" }} />}
                   size="lg"
                   color="primary"
                 >

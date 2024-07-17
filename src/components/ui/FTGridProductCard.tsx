@@ -1,32 +1,40 @@
-import { Image, Tooltip } from "@nextui-org/react";
+import { Tooltip } from "@nextui-org/react";
 import FTStar from "../../assets/icons/FTStar";
 import FTButton from "./FTButton";
 import FTCart from "../../assets/icons/FTCart";
 import FTEye from "../../assets/icons/FTEye";
+import { TProduct } from "../../redux/features/Product";
+import { useNavigate } from "react-router-dom";
 
-const FTGridProductCard = () => {
+const FTGridProductCard = ({ product }: { product: TProduct }) => {
+  const navigate = useNavigate();
   return (
-    <div className="rounded-lg overflow-hidden">
+    <div className="rounded-lg overflow-hidden h-full">
       <div className="bg-slate-100 p-5">
-        <Image src="https://i.ibb.co/MB3fjS9/Treadmill-Pro-X.jpg" />
+        <div className="w-full h-[240px] overflow-hidden rounded-lg bg-white flex items-center justify-center">
+          <img className="w-full h-full !object-contain" src={product?.images} />
+        </div>
       </div>
       <div className="space-y-2 p-5 border border-slate-200  border-t-0 rounded-b-lg">
-        <h4 className="text-2xl text-slate-800 font-semibold">
-          Treadmill Pro X
+        <h4 className="text-2xl text-slate-800 font-semibold h-16">
+          {product?.name}
         </h4>
         <div className="flex items-center justify-between">
-          {/* <h6 className="text-indigo-600">Available</h6> */}
-          <h6 className="text-red-600">Out of Stock</h6>
+          {Number(product?.stockQuantity) > 0 ? (
+            <h6 className="text-indigo-600">Available</h6>
+          ) : (
+            <h6 className="text-red-600">Out of Stock</h6>
+          )}
           <div className="flex items-center gap-1">
             <FTStar
               classNames={{ svg: "h-4 w-4", path: "stroke-yellow-500" }}
             />
-            <span className="text-slate-800">4.5/5</span>
+            <span className="text-slate-800">{product?.rating}/5</span>
           </div>
         </div>
         <div className="flex items-center justify-between gap-2">
           <h5 className="text-2xl text-slate-800 font-medium">
-            50.5 <sup className="text-sm">USD</sup>
+            {product?.price} <sup className="text-sm">USD</sup>
           </h5>
           <div className="flex items-center gap-1.5">
             <Tooltip
@@ -54,7 +62,7 @@ const FTGridProductCard = () => {
                 content: "!bg-indigo-600 !text-white !text-xs",
               }}
             >
-              <FTButton isIconOnly size="md" color="primary">
+              <FTButton onPress={() => navigate(product?._id as string)} isIconOnly size="md" color="primary">
                 <FTEye classNames={{ svg: "w-5 h-5", path: "stroke-white" }} />
               </FTButton>
             </Tooltip>

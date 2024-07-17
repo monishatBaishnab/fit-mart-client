@@ -98,7 +98,7 @@ export default function ProductsTable() {
         );
       case "actions":
         return (
-          <div className="flex items-center gap-2 justify-center">
+          <div className="flex items-center gap-2 justify-end">
             <FTButton
               isIconOnly
               size="md"
@@ -129,7 +129,9 @@ export default function ProductsTable() {
           <TableColumn
             key={column.uid}
             align={
-              column.uid === "actions" || column.uid === "availability"
+              column.uid === "actions"
+                ? "end"
+                : column.uid === "availability"
                 ? "center"
                 : "start"
             }

@@ -1,14 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-
 export const ftApi = createApi({
-  reducerPath: "Accessories",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://jsonplaceholder.typicode.com/" }),
+  reducerPath: "Product",
+  baseQuery: fetchBaseQuery({ baseUrl: "https://fit-mart-server-phi.vercel.app/" }),
   endpoints: (builder) => {
     return {
-      getAccessories: builder.query({
+      getProducts: builder.query({
         query: () => ({
-          url: "todos",
+          url: "products",
           method: "GET",
         }),
       }),
@@ -16,4 +15,10 @@ export const ftApi = createApi({
   },
 });
 
-export const { useGetAccessoriesQuery } = ftApi;
+// export const { useGetProductsQuery } = ftApi;
+
+type UseGetProductsQueryType = typeof ftApi.endpoints.getProducts.useQuery;
+
+const useTypedGetProductsQuery: UseGetProductsQueryType = ftApi.endpoints.getProducts.useQuery;
+
+export { useTypedGetProductsQuery as useGetProductsQuery };

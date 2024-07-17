@@ -12,13 +12,17 @@ import { useState } from "react";
 import FTButton from "../components/ui/FTButton";
 import categoriesData from "../assets/data/categories";
 import FTBreadcrumbs from "../components/ui/FTBreadcrumbs";
+import { useGetProductsQuery } from "../redux/api";
+import { TProduct } from "../redux/features/Product";
+
 
 const Products = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(4000);
   const [categories, setCategories] = useState<string[]>(["all"]);
   const [sort, setSort] = useState<string>("ascending");
-
+  const { data, isLoading} = useGetProductsQuery(undefined) ?? {};
+  console.log(data);
   const handleClearFilter = () => {
     setMinPrice(0);
     setMaxPrice(4000);
@@ -132,10 +136,12 @@ const Products = () => {
               <span className="text-black">100</span> Products
             </span>
           </div>
-          <FTGridProductCard />
-          <FTGridProductCard />
-          <FTGridProductCard />
-          <FTGridProductCard />
+          {
+            // products?.data?.map()
+            !isLoading
+              ? data?.data?.map((product:TProduct) => <FTGridProductCard key={product?._id} product={product} />)
+              : null
+          }
         </div>
       </div>
     </div>
