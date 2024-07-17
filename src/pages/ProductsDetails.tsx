@@ -8,47 +8,21 @@ import FTCar from "../assets/icons/FTCar";
 import FTCart from "../assets/icons/FTCart";
 import FTStepper from "../components/ui/FTStepper";
 import { useState } from "react";
-
-const product = {
-  specifications: {
-    dimensions: "18 x 6 inches",
-    weight: "1.5 lbs",
-    material: "EVA foam",
-  },
-  manufacturerDetails: {
-    contactInfo: {
-      phone: "666-123-7890",
-      email: "info@therarelief.com",
-      address: "789 Relaxation Rd, Therapy Town, USA",
-    },
-    name: "TheraRelief LLC",
-  },
-  _id: "6690e215b07144526fdfef7e",
-  name: "Foam Roller",
-  brand: "TheraRelief",
-  price: 24.99,
-  stockQuantity: 150,
-  description:
-    "High-density foam roller for deep tissue massage and muscle recovery.",
-  category: "accessories",
-  images: "https://i.ibb.co/fSF0vCz/Resistance-Bands-Set.jpg",
-  rating: 4.7,
-  features: [
-    "High-density foam",
-    "Textured surface",
-    "Lightweight and portable",
-  ],
-  warranty: "1 year",
-  returnPolicy: "30-day return policy",
-  __v: 0,
-};
+import { useGetProductQuery } from "../redux/api";
+import { useParams } from "react-router-dom";
+import { TProduct } from "../redux/features/Product";
 
 const ProductsDetails = () => {
   const [quantity, setQuantity] = useState<number>(1);
-  
+  const { id } = useParams();
+  const { data, isLoading } = useGetProductQuery(id);
+  const product: TProduct = data?.data ?? {};
+  if (isLoading) {
+    return "loading";
+  }
   return (
     <div>
-      <FTBreadcrumbs title="Product One" />
+      <FTBreadcrumbs title={product?.name} />
       <div className="grid grid-cols-1 md:grid-cols-2 container gap-5">
         <div className="w-full h-full">
           <div className="border border-slate-200 p-5 md:p-10 rounded-lg flex items-center justify-center">
@@ -73,14 +47,14 @@ const ProductsDetails = () => {
               <FTStock
                 classNames={{
                   path: `${
-                    product?.stockQuantity > 0
+                    Number(product?.stockQuantity) > 0
                       ? "fill-indigo-600"
                       : "fill-red-500"
                   }`,
                 }}
               />
               <span className="text-slate-500 font-medium">
-                {product?.stockQuantity > 0 ? "In Stock" : "Out of stock"}
+                {Number(product?.stockQuantity) > 0 ? "In Stock" : "Out of stock"}
               </span>
             </div>
             <div className="flex items-center gap-1">
@@ -115,7 +89,7 @@ const ProductsDetails = () => {
                 placeholder="1"
                 key="price"
                 maxValue={
-                  product?.stockQuantity < 10 ? product?.stockQuantity : 10
+                  Number(product?.stockQuantity) < 10 ? Number(product?.stockQuantity) : 10
                 }
                 value={quantity}
                 setValue={setQuantity}

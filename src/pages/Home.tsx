@@ -115,7 +115,7 @@ const Home = () => {
                 <h5 className="text-center text-lg font-semibold">
                   {category?.label}
                 </h5>
-                <Link className="text-indigo-600 invisible transition-all group-hover:visible text-sm flex items-center gap-2" to='/'>View Products</Link>
+                <Link className="text-indigo-600 invisible transition-all group-hover:visible text-sm flex items-center gap-2" to={`/products?categories=${category?.key}`}>View Products</Link>
               </div>
             </div>
           ))}

@@ -14,19 +14,30 @@ import categoriesData from "../assets/data/categories";
 import FTBreadcrumbs from "../components/ui/FTBreadcrumbs";
 import { useGetProductsQuery } from "../redux/api";
 import { TProduct } from "../redux/features/Product";
-
+import { useLocation } from "react-router-dom";
 
 const Products = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(4000);
-  const [categories, setCategories] = useState<string[]>(["all"]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [sort, setSort] = useState<string>("ascending");
-  const { data, isLoading} = useGetProductsQuery(undefined) ?? {};
-  console.log(data);
+  const location = useLocation();
+  const categoryFromLocation = location?.search?.substring(1)?.split("=")[1];
+  if(categoryFromLocation){
+    setCategories(prev => [...prev, categoryFromLocation]);
+  }
+  const { data, isLoading } =
+    useGetProductsQuery({
+      minPrice,
+      maxPrice,
+      categories: categories?.join(','),
+      sort: sort === "ascending" ? 1 : -1,
+    }) ?? {};
+
   const handleClearFilter = () => {
     setMinPrice(0);
     setMaxPrice(4000);
-    setCategories(["all"]);
+    setCategories([]);
     setSort("ascending");
   };
 
@@ -62,6 +73,10 @@ const Products = () => {
               <AccordionItem key="1" aria-label="Category" title="Category">
                 <Checkbox
                   className="mb-[1px]"
+                  classNames={{
+                    wrapper:
+                      "data-[focus-visible=true]!ring-0 group-data-[focus-visible=true]:!ring-0 group-data-[focus-visible=true]:!ring-offset-0 after:!bg-indigo-600",
+                  }}
                   value="all"
                   onValueChange={(isChecked) =>
                     handleSelectAllCategories(isChecked)
@@ -76,7 +91,14 @@ const Products = () => {
                   aria-label="category-filter"
                 >
                   {categoriesData?.map((categoryData) => (
-                    <Checkbox key={categoryData?.key} value={categoryData?.key}>
+                    <Checkbox
+                      classNames={{
+                        wrapper:
+                          "data-[focus-visible=true]!ring-0 group-data-[focus-visible=true]:!ring-0 group-data-[focus-visible=true]:!ring-offset-0 after:!bg-indigo-600",
+                      }}
+                      key={categoryData?.key}
+                      value={categoryData?.key}
+                    >
                       {categoryData?.label}
                     </Checkbox>
                   ))}
@@ -88,8 +110,26 @@ const Products = () => {
                   onValueChange={setSort}
                   aria-label="sort-filter"
                 >
-                  <Radio value="ascending">Ascending</Radio>
-                  <Radio value="descending">Descending</Radio>
+                  <Radio
+                    classNames={{
+                      wrapper:
+                        "data-[focus-visible=true]!ring-0 group-data-[focus-visible=true]:!ring-0 group-data-[focus-visible=true]:!ring-offset-0  group-data-[selected=true]:border-indigo-600",
+                      control: "!bg-indigo-600",
+                    }}
+                    value="ascending"
+                  >
+                    Ascending
+                  </Radio>
+                  <Radio
+                    classNames={{
+                      wrapper:
+                        "data-[focus-visible=true]!ring-0 group-data-[focus-visible=true]:!ring-0 group-data-[focus-visible=true]:!ring-offset-0  group-data-[selected=true]:border-indigo-600",
+                      control: "!bg-indigo-600",
+                    }}
+                    value="descending"
+                  >
+                    Descending
+                  </Radio>
                 </RadioGroup>
               </AccordionItem>
               <AccordionItem
@@ -129,17 +169,23 @@ const Products = () => {
         </div>
         {/* Products part */}
         <div className="col-span-1 sm:col-span-2 lg:col-span-3 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="col-span-3 py-3 flex items-center justify-between border-b border-b-slate-200">
-            <h3 className="text-3xl font-bold">Products</h3>
-            <span className="text-slate-500">
-              Showing <span className="text-black">1-10</span> of{" "}
-              <span className="text-black">100</span> Products
-            </span>
+          <div className="col-span-3 ">
+            <div className="py-3 flex items-center justify-between border-b border-b-slate-200">
+              <h3 className="text-3xl font-bold">Products</h3>
+              <span className="text-slate-500">
+                Showing{" "}
+                <span className="text-black">1-{data?.data?.length}</span> of{" "}
+                <span className="text-black">{data?.data?.length}</span>{" "}
+                Products
+              </span>
+            </div>
           </div>
           {
             // products?.data?.map()
             !isLoading
-              ? data?.data?.map((product:TProduct) => <FTGridProductCard key={product?._id} product={product} />)
+              ? data?.data?.map((product: TProduct) => (
+                  <FTGridProductCard key={product?._id} product={product} />
+                ))
               : null
           }
         </div>
