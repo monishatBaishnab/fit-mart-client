@@ -3,6 +3,7 @@ import App from "../App";
 import Home from "../pages/Home";
 import Products from "../pages/Products";
 import ProductsDetails from "../pages/ProductsDetails";
+import ProductManagement from "../pages/ProductManagement";
 
 export const navLinks = [
     {
@@ -39,6 +40,10 @@ export const routes = createBrowserRouter([
             {
                 path: '/products',
                 element: <Products />
+            },
+            {
+                path: '/product-management',
+                element: <ProductManagement />
             },
             {
                 path: '/products/:id',

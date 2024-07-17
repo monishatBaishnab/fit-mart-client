@@ -45,7 +45,7 @@ const product = {
 
 const ProductsDetails = () => {
   const [quantity, setQuantity] = useState<number>(1);
-
+  
   return (
     <div>
       <FTBreadcrumbs title="Product One" />
@@ -103,7 +103,9 @@ const ProductsDetails = () => {
             <span className="text-slate-800">{product?.returnPolicy}</span>
 
             <span className="text-slate-500">Available Product</span>
-            <span className="text-slate-800">{product?.stockQuantity} Pics</span>
+            <span className="text-slate-800">
+              {product?.stockQuantity} Pics
+            </span>
           </div>
           <div className="flex gap-4 items-center">
             <div>
@@ -146,37 +148,6 @@ const ProductsDetails = () => {
               size="lg"
             >
               <Tab
-                key="Specification"
-                title="Specification"
-                className="data-[focus-visible=true]:!outline-none"
-              >
-                <div className="space-y-2">
-                  {Object.keys(product?.specifications)?.map((item: string) => (
-                    <span key={item} className="text-slate-800 flex items-start gap-2">
-                      <FTCheckRound />{" "}
-                      {
-                        (product?.specifications as Record<string, string>)[
-                          item
-                        ]
-                      }
-                    </span>
-                  ))}
-                </div>
-              </Tab>
-              <Tab
-                key="Features"
-                title="Features"
-                className="data-[focus-visible=true]:!outline-none"
-              >
-                <div className="space-y-2">
-                  {product?.features?.map((feature) => (
-                    <span key={feature} className="text-slate-800 flex items-start gap-2">
-                      <FTCheckRound /> {feature}
-                    </span>
-                  ))}
-                </div>
-              </Tab>
-              <Tab
                 key="Manufacturer"
                 title="Manufacturer"
                 className="data-[focus-visible=true]:!outline-none"
@@ -206,6 +177,43 @@ const ProductsDetails = () => {
                   <span className="col-span-4 text-slate-800">
                     {product?.manufacturerDetails?.contactInfo?.phone}
                   </span>
+                </div>
+              </Tab>
+              <Tab
+                key="Specification"
+                title="Specification"
+                className="data-[focus-visible=true]:!outline-none"
+              >
+                <div className="space-y-2">
+                  {Object.keys(product?.specifications)?.map((item: string) => (
+                    <span
+                      key={item}
+                      className="text-slate-800 flex items-start gap-2"
+                    >
+                      <FTCheckRound />{" "}
+                      {
+                        (product?.specifications as Record<string, string>)[
+                          item
+                        ]
+                      }
+                    </span>
+                  ))}
+                </div>
+              </Tab>
+              <Tab
+                key="Features"
+                title="Features"
+                className="data-[focus-visible=true]:!outline-none"
+              >
+                <div className="space-y-2">
+                  {product?.features?.map((feature) => (
+                    <span
+                      key={feature}
+                      className="text-slate-800 flex items-start gap-2"
+                    >
+                      <FTCheckRound /> {feature}
+                    </span>
+                  ))}
                 </div>
               </Tab>
             </Tabs>
