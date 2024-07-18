@@ -8,7 +8,7 @@ import {
 } from "@nextui-org/react";
 import FTGridProductCard from "../components/ui/FTGridProductCard";
 import MultiRangeSlider, { ChangeResult } from "multi-range-slider-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FTButton from "../components/ui/FTButton";
 import categoriesData from "../assets/data/categories";
 import FTBreadcrumbs from "../components/ui/FTBreadcrumbs";
@@ -23,16 +23,20 @@ const Products = () => {
   const [sort, setSort] = useState<string>("ascending");
   const location = useLocation();
   const categoryFromLocation = location?.search?.substring(1)?.split("=")[1];
-  if(categoryFromLocation){
-    setCategories(prev => [...prev, categoryFromLocation]);
-  }
+
   const { data, isLoading } =
     useGetProductsQuery({
       minPrice,
       maxPrice,
-      categories: categories?.join(','),
+      categories: categories?.join(","),
       sort: sort === "ascending" ? 1 : -1,
     }) ?? {};
+
+  useEffect(() => {
+    if (categoryFromLocation) {
+      return setCategories([categoryFromLocation]);
+    }
+  }, [categoryFromLocation]);
 
   const handleClearFilter = () => {
     setMinPrice(0);

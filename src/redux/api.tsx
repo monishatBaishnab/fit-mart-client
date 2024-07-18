@@ -10,9 +10,8 @@ export const ftApi = createApi({
     return {
       getProducts: builder.query({
         query: (query) => {
-          const { minPrice, maxPrice, categories, sort } = query ?? {};
+          const { minPrice, maxPrice, categories, sort, search } = query ?? {};
           const params = new URLSearchParams();
-          console.log(categories);
           if (minPrice && maxPrice) {
             params.append("minPrice", minPrice);
             params.append("maxPrice", maxPrice);
@@ -22,6 +21,9 @@ export const ftApi = createApi({
           }
           if (sort) {
             params.append("sort", sort);
+          }
+          if(search){
+            params.append('search', search);
           }
 
           return {
