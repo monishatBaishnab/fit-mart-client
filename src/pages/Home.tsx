@@ -4,8 +4,10 @@ import FTButton from "../components/ui/FTButton";
 import { Image } from "@nextui-org/react";
 import FTGridProductCard from "../components/ui/FTGridProductCard";
 import FTArrowRight from "../assets/icons/FTArrowRight";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import categoriesData from "../assets/data/categories";
+import { useGetProductsQuery } from "../redux/api";
+import { TProduct } from "../redux/features/Product";
 
 const mosaicImages = [
   {
@@ -65,6 +67,8 @@ const mosaicImages = [
 ];
 
 const Home = () => {
+  const navigate = useNavigate();
+  const { data, isLoading } = useGetProductsQuery({}) ?? {};
   return (
     <div>
       <Parallax
@@ -83,6 +87,7 @@ const Home = () => {
               your workouts and achieve your goals.
             </p>
             <FTButton
+              onPress={() => navigate("/products")}
               size="lg"
               color="secondary"
               className="data-[hover=true]:!bg-white data-[hover=true]:text-indigo-600"
@@ -115,7 +120,12 @@ const Home = () => {
                 <h5 className="text-center text-lg font-semibold">
                   {category?.label}
                 </h5>
-                <Link className="text-indigo-600 invisible transition-all group-hover:visible text-sm flex items-center gap-2" to={`/products?categories=${category?.key}`}>View Products</Link>
+                <Link
+                  className="text-indigo-600 invisible transition-all group-hover:visible text-sm flex items-center gap-2"
+                  to={`/products?categories=${category?.key}`}
+                >
+                  View Products
+                </Link>
               </div>
             </div>
           ))}
@@ -127,7 +137,13 @@ const Home = () => {
           Discover Our <span className="text-indigo-500">Top Picks</span>
         </h2>
         <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          <FTGridProductCard />
+          {data?.data?.length && !isLoading
+            ? data?.data
+                ?.slice(0, 4)
+                ?.map((product: TProduct) => (
+                  <FTGridProductCard key={product?._id} product={product} />
+                ))
+            : null}
         </div>
       </div>
 
@@ -180,6 +196,7 @@ const Home = () => {
             </p>
           </div>
           <FTButton
+            onPress={() => navigate("/products")}
             size="lg"
             color="primary"
             endContent={<FTArrowRight classNames={{ path: "stroke-white" }} />}
@@ -200,7 +217,7 @@ const Home = () => {
               key={id}
               id={id}
               className={`w-full h-full overflow-hidden rounded-lg`}
-              style={{ gridRow: `span ${rowSpan}`}}
+              style={{ gridRow: `span ${rowSpan}` }}
             >
               <img className="w-full h-full object-cover" src={image} />
             </div>

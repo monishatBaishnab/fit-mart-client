@@ -2,9 +2,9 @@ import { Tooltip } from "@nextui-org/react";
 import FTStar from "../../assets/icons/FTStar";
 import FTButton from "./FTButton";
 import FTCart from "../../assets/icons/FTCart";
-import FTEye from "../../assets/icons/FTEye";
 import { TProduct } from "../../redux/features/Product";
 import { useNavigate } from "react-router-dom";
+import FTExternalLink from "../../assets/icons/FTExternalLink";
 
 const FTGridProductCard = ({ product }: { product: TProduct }) => {
   const navigate = useNavigate();
@@ -62,8 +62,8 @@ const FTGridProductCard = ({ product }: { product: TProduct }) => {
                 content: "!bg-indigo-600 !text-white !text-xs",
               }}
             >
-              <FTButton onPress={() => navigate(product?._id as string)} isIconOnly size="md" color="primary">
-                <FTEye classNames={{ svg: "w-5 h-5", path: "stroke-white" }} />
+              <FTButton onPress={() => navigate(`/products/${product?._id as string}`)} isIconOnly size="md" color="primary">
+                <FTExternalLink classNames={{ svg: "w-5 h-5", path: "stroke-white" }} />
               </FTButton>
             </Tooltip>
           </div>

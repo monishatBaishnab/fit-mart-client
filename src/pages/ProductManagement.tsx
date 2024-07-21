@@ -1,6 +1,4 @@
-import {
-  useDisclosure,
-} from "@nextui-org/react";
+import { useDisclosure } from "@nextui-org/react";
 import FTPlus from "../assets/icons/FTPlus";
 import ProductsTable from "../components/modules/ProductManagement/ProductsTable";
 import FTBreadcrumbs from "../components/ui/FTBreadcrumbs";
@@ -11,10 +9,12 @@ import FTSelect from "../components/ui/FTSelect";
 import FTSelectItem from "../components/ui/FTSelectItem";
 import formInputs from "../assets/data/formInputs";
 import FTAlert from "../assets/icons/FTAlert";
-import FTInputFile from "../components/ui/FTInputFile";
-import FTImage from "../assets/icons/FTImage";
 import { ChangeEvent, useState } from "react";
 import FTModal from "../components/ui/FTModal";
+import { TProduct } from "../redux/features/Product";
+import DetailsContainer from "../components/modules/SingleProduct/DetailsContainer";
+import { findManufacturerDetails } from "../assets/data/manufacturerDetails";
+import { useCreateProductMutation, useEditProductMutation } from "../redux/api";
 
 const initialProduct = {
   specifications: {
@@ -38,16 +38,84 @@ const initialProduct = {
 
 const ProductManagement = () => {
   const { onClose, onOpen, isOpen } = useDisclosure();
-  const [product, setProduct] = useState(initialProduct);
-  console.log(product, setProduct);
+  const [modalTitle, setModalTitle] = useState<string>("");
+  const [createProduct, createResponse] = useCreateProductMutation();
+  const [editProduct, editResponse] = useEditProductMutation();
+  const [action, setAction] = useState<"edit" | "create">();
+  const [product, setProduct] = useState<TProduct>(initialProduct);
+  const {
+    onClose: onDetailsClose,
+    onOpen: onDetailsOpen,
+    isOpen: isDetailsClose,
+  } = useDisclosure();
+
+  const handleOpen = () => {
+    onOpen();
+    setProduct(initialProduct);
+    setModalTitle("Create Product");
+    setAction("create");
+  };
+
+  const handleActions = (
+    action: "edit" | "delete" | "details",
+    payload?: TProduct
+  ) => {
+    if (action === "edit") {
+      setAction(action);
+    }
+    if (action === "edit") {
+      setProduct(payload as TProduct);
+      onOpen();
+      setModalTitle("Update Product");
+    }
+    if (action === "delete") {
+      console.log("delete");
+    }
+    if (action === "details") {
+      setProduct(payload as TProduct);
+      onDetailsOpen();
+    }
+  };
+
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    console.log(e);
+    const name = e?.target?.name;
+    const value = e?.target?.value;
+    if (name === "weight" || name === "material" || name === "dimensions") {
+      setProduct((prevProduct) => ({
+        ...prevProduct,
+        specifications: {
+          ...prevProduct?.specifications,
+          [name]: value,
+        },
+      }));
+    } else if (name === "features") {
+      const featuresArr = value?.split(",").map((value) => value?.trim());
+      setProduct((prevProduct) => ({
+        ...prevProduct,
+        [name]: featuresArr,
+      }));
+    } else {
+      setProduct((prevProduct) => ({
+        ...prevProduct,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSave = () => {
-    console.log(product);
+    console.log(action);
+    const manufacturerDetails = findManufacturerDetails(product?.brand);
+    if (action === "edit") {
+      editProduct({
+        product: { ...product, manufacturerDetails },
+        id: product?._id as string,
+      });
+    } else if(action === 'create') {
+      createProduct({ ...product, manufacturerDetails });
+    }
+
     onClose();
   };
 
@@ -58,16 +126,17 @@ const ProductManagement = () => {
         <div className="pb-5 flex justify-between items-center">
           <h2 className="text-3xl font-semibold">All Products</h2>
           <FTButton
-            onPress={onOpen}
+            onPress={handleOpen}
             color="primary"
             size="lg"
+            className="!min-w-12 !p-0 md:!min-w-24 md:!p-6"
             endContent={<FTPlus classNames={{ path: "stroke-white" }} />}
           >
-            Create Product
+            <span className="hidden sm:inline-block">Create Product</span>
           </FTButton>
         </div>
 
-        <ProductsTable />
+        <ProductsTable handleActions={handleActions} />
       </div>
 
       <FTModal
@@ -76,18 +145,36 @@ const ProductManagement = () => {
         name="product-management-modal"
         saveButton={{ status: true, label: "Save", handleSave }}
         size="3xl"
-        title="Create Product"
+        title={modalTitle}
         key="product-management-modal"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-7 p-6">
+        <div className="space-y-14 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-5 md:gap-y-7 p-0 md:p-6">
           {formInputs?.map((formInput) => {
+            const name: string = formInput?.props?.name ?? "";
+            const placeholder = formInput?.props?.placeholder ?? "";
+            const label = formInput?.props?.label ?? "";
+            const description = formInput?.props?.description ?? "";
+            let defaultSelectedKeys: string[] = [];
+            let defaultValue: string = "";
+
+            if (name) {
+              if ([product[name]]) {
+                defaultSelectedKeys = [product[name]];
+                defaultValue = product[name];
+              }
+              if (!product?.[name]) {
+                defaultValue = product?.specifications[name];
+              }
+            }
+
             return formInput?.type === "FTSelect" ? (
               <div key={formInput?.props?.name}>
                 <FTSelect
                   onChange={(e) => handleChange(e)}
-                  name={formInput?.props?.name}
-                  placeholder={formInput?.props?.placeholder}
-                  label={formInput?.props?.label}
+                  name={name}
+                  placeholder={placeholder}
+                  label={label}
+                  defaultSelectedKeys={defaultSelectedKeys}
                 >
                   {(formInput?.props?.options ?? [])?.map((option) => (
                     <FTSelectItem key={option?.key}>
@@ -97,26 +184,33 @@ const ProductManagement = () => {
                 </FTSelect>
               </div>
             ) : formInput?.type === "FTInput" ? (
-              <div key={formInput?.props?.name}>
+              <div
+                key={formInput?.props?.name}
+                className={`md:col-span-${
+                  formInput?.props?.colSpan ? formInput?.props?.colSpan : "1"
+                }`}
+              >
                 <FTInput
-                  onChange={(e) => handleChange(e)}
-                  name={formInput?.props?.name}
-                  placeholder={formInput?.props?.placeholder}
-                  label={formInput?.props?.label}
+                  defaultValue={defaultValue}
+                  onBlur={(e) => handleChange(e)}
+                  name={name}
+                  placeholder={placeholder}
+                  label={label}
                 />
               </div>
             ) : (
-              <div key={formInput?.props?.name} className={"col-span-2"}>
+              <div key={name} className="md:col-span-2">
                 <FTTextArea
-                  onChange={(e) => handleChange(e)}
-                  name={formInput?.props?.name}
-                  placeholder={formInput?.props?.placeholder}
-                  label={formInput?.props?.label}
+                  defaultValue={defaultValue}
+                  onBlur={(e) => handleChange(e)}
+                  name={name}
+                  placeholder={placeholder}
+                  label={label}
                   description={
                     formInput?.props?.description ? (
                       <div className="flex items-center gap-1">
                         <FTAlert classNames={{ path: "stroke-slate-700" }} />{" "}
-                        {formInput?.props?.description}
+                        {description}
                       </div>
                     ) : null
                   }
@@ -124,18 +218,33 @@ const ProductManagement = () => {
               </div>
             );
           })}
-          <div className="col-span-2">
+          {/* <div className="col-span-2">
             <FTInputFile
               fileIcon={<FTImage />}
-              // src="https://i.ibb.co/8cPmH7L/Dumbbell-Set.jpg"
+              src={product?.images}
               name="product_image"
               label="Upload File"
               description="or click to browse"
             />
-          </div>
+          </div> */}
         </div>
       </FTModal>
 
+      <FTModal
+        actions={{
+          isOpen: isDetailsClose,
+          onClose: onDetailsClose,
+          onOpen: onDetailsOpen,
+        }}
+        cancelButton={{ status: true, label: "Close" }}
+        name="product-details-modal"
+        saveButton={{ status: false }}
+        size="3xl"
+        title="Product Details"
+        key="product-details-modal"
+      >
+        <DetailsContainer product={product} actionButtons={false} />
+      </FTModal>
     </div>
   );
 };

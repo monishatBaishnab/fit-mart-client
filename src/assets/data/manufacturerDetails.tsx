@@ -1,4 +1,4 @@
-const manufacturerDetails = [
+const manufacturerData = [
   {
     key: "TheraRelief",
     manufacturerDetails: {
@@ -111,10 +111,21 @@ const manufacturerDetails = [
   },
 ];
 
-export const brandsArray = manufacturerDetails.map(item => ({
-    key: item.key,
-    label: item.key
-  }));
-  
+export const brandsArray = manufacturerData.map((item) => ({
+  key: item.key,
+  label: item.key,
+}));
 
-export default manufacturerDetails;
+export const findManufacturerDetails = (key: string) => {
+  const data = manufacturerData.find((item) => item?.key === key);
+  return {
+    name: data?.manufacturerDetails?.name,
+    contactInfo: {
+      email: data?.manufacturerDetails?.contactInfo?.email,
+      address: data?.manufacturerDetails?.contactInfo?.address,
+      phone: data?.manufacturerDetails?.contactInfo?.phone,
+    },
+  };
+};
+
+export default manufacturerData;

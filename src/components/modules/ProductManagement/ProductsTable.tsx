@@ -1,4 +1,4 @@
-import { Key, useCallback } from "react";
+import { Key } from "react";
 import {
   Table,
   TableHeader,
@@ -11,6 +11,10 @@ import {
 import FTButton from "../../ui/FTButton";
 import FTEdit from "../../../assets/icons/FTEdit";
 import FTTrash from "../../../assets/icons/FTTrash";
+import { useGetProductsQuery } from "../../../redux/api";
+import { TProduct } from "../../../redux/features/Product";
+import FTEmptyCard from "../../ui/FTEmptyCard";
+import FTExternalLink from "../../../assets/icons/FTExternalLink";
 
 const columns = [
   { name: "NAME", uid: "name" },
@@ -20,74 +24,25 @@ const columns = [
   { name: "ACTIONS", uid: "actions" },
 ];
 
-const products = [
-  {
-    id: 1,
-    name: "Tony Reichert",
-    role: "CEO",
-    team: "Management",
-    status: "active",
-    age: "29",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-    email: "tony.reichert@example.com",
-  },
-  {
-    id: 2,
-    name: "Zoey Lang",
-    role: "Technical Lead",
-    team: "Development",
-    status: "paused",
-    age: "25",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-    email: "zoey.lang@example.com",
-  },
-  {
-    id: 3,
-    name: "Jane Fisher",
-    role: "Senior Developer",
-    team: "Development",
-    status: "active",
-    age: "22",
-    avatar: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-    email: "jane.fisher@example.com",
-  },
-  {
-    id: 4,
-    name: "William Howard",
-    role: "Community Manager",
-    team: "Marketing",
-    status: "vacation",
-    age: "28",
-    avatar: "https://i.pravatar.cc/150?u=a048581f4e29026701d",
-    email: "william.howard@example.com",
-  },
-  {
-    id: 5,
-    name: "Kristen Copper",
-    role: "Sales Manager",
-    team: "Sales",
-    status: "active",
-    age: "24",
-    avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
-    email: "kristen.cooper@example.com",
-  },
-];
+const ProductsTable = ({
+  handleActions,
+}: {
+  handleActions: (action: "edit" | "delete"| "details", payload?: TProduct) => void;
+}) => {
+  const { data, isLoading } = useGetProductsQuery({}) ?? {};
 
-type Product = (typeof products)[0];
-
-export default function ProductsTable() {
-  const renderCell = useCallback((product: Product, columnKey: Key) => {
-    const cellValue = product[columnKey as keyof Product];
+  const renderCell = (product: TProduct, columnKey: Key) => {
+    // const cellValue = product[columnKey as keyof TProduct];
 
     switch (columnKey) {
       case "name":
         return <h6>{product?.name}</h6>;
       case "price":
-        return <h6>{product?.age}</h6>;
+        return <h6>{product?.price}</h6>;
       case "category":
-        return <h6>{product?.role}</h6>;
+        return <h6>{product?.category}</h6>;
       case "availability":
-        return Number(product?.age) > 25 ? (
+        return Number(product?.stockQuantity) > 0 ? (
           <Chip radius="sm" className={`bg-indigo-100 text-indigo-600`}>
             Available
           </Chip>
@@ -103,7 +58,16 @@ export default function ProductsTable() {
               isIconOnly
               size="md"
               color="primary"
+              onClick={() => handleActions("details", product)}
+            >
+              <FTExternalLink classNames={{ path: "stroke-white", svg: "h-4 w-4" }} />
+            </FTButton> 
+            <FTButton
+              isIconOnly
+              size="md"
+              color="primary"
               className="bg-green-500 data-[hover=true]:bg-green-500 data-[hover=true]:!ring-green-500 data-[pressed=true]:!bg-green-500"
+              onClick={() => handleActions("edit", product)}
             >
               <FTEdit classNames={{ path: "stroke-white", svg: "h-4 w-4" }} />
             </FTButton>
@@ -112,15 +76,20 @@ export default function ProductsTable() {
               isIconOnly
               color="primary"
               className="bg-red-500 data-[hover=true]:bg-red-500 data-[hover=true]:!ring-red-500 data-[pressed=true]:!bg-red-500"
+              onClick={() => handleActions("delete")}
             >
               <FTTrash classNames={{ path: "stroke-white", svg: "h-5 w-5" }} />
             </FTButton>
           </div>
         );
       default:
-        return cellValue;
+        return null;
     }
-  }, []);
+  };
+
+  if (isLoading) {
+    return <FTEmptyCard key="product-management" title="Product not found." />;
+  }
 
   return (
     <Table aria-label="products" isStriped>
@@ -140,9 +109,9 @@ export default function ProductsTable() {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={products}>
-        {(item) => (
-          <TableRow key={item.id}>
+      <TableBody items={data?.data}>
+        {(item: TProduct) => (
+          <TableRow key={item._id}>
             {(columnKey) => (
               <TableCell>{renderCell(item, columnKey)}</TableCell>
             )}
@@ -151,4 +120,6 @@ export default function ProductsTable() {
       </TableBody>
     </Table>
   );
-}
+};
+
+export default ProductsTable;

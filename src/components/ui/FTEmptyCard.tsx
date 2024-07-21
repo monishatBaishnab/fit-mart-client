@@ -5,7 +5,7 @@ const FTEmptyCard = ({
   description,
 }: {
   title: string;
-  description: string;
+  description?: string;
 }) => {
   return (
     <div>

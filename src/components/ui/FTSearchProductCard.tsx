@@ -7,13 +7,30 @@ import FTButton from "./FTButton";
 import FTExternalLink from "../../assets/icons/FTExternalLink";
 import { TProduct } from "../../redux/features/Product";
 import { useNavigate } from "react-router-dom";
+import { Dispatch, SetStateAction } from "react";
 
-const FTSearchProductCard = ({ product, onClose }: { product: TProduct, onClose: () => void }) => {
-  const navigate  = useNavigate();
+type TState = {
+  search: string;
+  setSearch: Dispatch<SetStateAction<string>>
+};
+
+type FTSearchProductCard = {
+  product: TProduct;
+  onClose: () => void;
+  states: TState;
+};
+
+const FTSearchProductCard = ({
+  product,
+  onClose,
+  states,
+}: FTSearchProductCard) => {
+  const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/products/${product?._id}`);
     onClose();
-  }
+    states?.setSearch("");
+  };
   return (
     <div className="flex flex-col sm:flex-row items-center gap-5 border border-slate-200 p-5 rounded-lg pt-4 transition-all hover:ring hover:ring-indigo-600 hover:ring-offset-2">
       <div className="sm:w-20 sm:basis-20 h-full overflow-auto">
@@ -73,8 +90,15 @@ const FTSearchProductCard = ({ product, onClose }: { product: TProduct, onClose:
           </div>
         </div>
         <div className="flex items-end justify-end  flex-col gap-2">
-          <h4 className="text-xl text-slate-500 font-medium">{product?.price}$</h4>
-          <FTButton onPress={handleClick} color="secondary" isIconOnly size="sm">
+          <h4 className="text-xl text-slate-500 font-medium">
+            {product?.price}$
+          </h4>
+          <FTButton
+            onPress={handleClick}
+            color="secondary"
+            isIconOnly
+            size="sm"
+          >
             <FTExternalLink
               classNames={{ path: "stroke-slate-700", svg: "w-4 h-4" }}
             />

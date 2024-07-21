@@ -30,9 +30,18 @@ const formInputs = [
   {
     type: "FTInput",
     props: {
-      name: "Stock",
+      name: "stockQuantity",
       placeholder: "Enter product stock...",
       label: "Product Stock",
+    },
+  },
+  {
+    type: "FTInput",
+    props: {
+      name: "images",
+      placeholder: "Product image link...",
+      label: "Product Image",
+      colSpan: "2",
     },
   },
   {

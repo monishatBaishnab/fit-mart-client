@@ -32,16 +32,53 @@ const NavActions = () => {
       <SearchBox />
 
       <div>
-        <FTButton size='lg'color="secondary" isIconOnly className="group" disableRipple>
-          <FTCart
-            classNames={{
-              path: "stroke-slate-800 transition-all group-hover:stroke-indigo-600",
-            }}
-          />
-        </FTButton>
+        <FTDropdown
+          trigger={
+            <FTButton
+              size="lg"
+              color="secondary"
+              isIconOnly
+              className="group"
+              disableRipple
+            >
+              <FTCart
+                classNames={{
+                  path: "stroke-slate-800 transition-all group-hover:stroke-indigo-600",
+                }}
+              />
+            </FTButton>
+          }
+        >
+          {navLinks?.map((navLink) => {
+            const StartIcon = renderStartIcon(navLink?.key);
+            return (
+              <DropdownItem
+                key={navLink?.label}
+                onPress={() => navigate(navLink?.path)}
+                className="group"
+                startContent={
+                  <StartIcon
+                    classNames={{
+                      path: "stroke-slate-500 transition-all group-hover:stroke-slate-800",
+                      svg: "w-5 h-5",
+                    }}
+                  />
+                }
+              >
+                {navLink?.label}
+              </DropdownItem>
+            );
+          })}
+        </FTDropdown>
       </div>
       <div>
-        <FTButton size='lg'color="secondary" isIconOnly className="group" disableRipple>
+        <FTButton
+          size="lg"
+          color="secondary"
+          isIconOnly
+          className="group"
+          disableRipple
+        >
           <FTUser
             classNames={{
               path: "stroke-slate-800 transition-all group-hover:stroke-indigo-600",

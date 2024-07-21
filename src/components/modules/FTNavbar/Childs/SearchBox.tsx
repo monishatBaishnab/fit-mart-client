@@ -10,7 +10,7 @@ import { useState } from "react";
 import { TProduct } from "../../../../redux/features/Product";
 const SearchBox = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
   const { data, isLoading } =
     useGetProductsQuery({ search: search ? search : " " }) ?? {};
 
@@ -57,7 +57,14 @@ const SearchBox = () => {
 
           <div className="my-8">
             {data?.data?.length && !isLoading ? (
-              data?.data?.map((product: TProduct) => <FTSearchProductCard onClose={onClose} key={product?._id} product={product} />)
+              data?.data?.map((product: TProduct) => (
+                <FTSearchProductCard
+                  states={{ search, setSearch }}
+                  onClose={onClose}
+                  key={product?._id}
+                  product={product}
+                />
+              ))
             ) : (
               <FTEmptyCard
                 title="Product not found!"
