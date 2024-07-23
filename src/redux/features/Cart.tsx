@@ -13,19 +13,34 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addProductToCart: (state, action: PayloadAction<TCart>) => {
-      const existsProduct = state.find(
-        (item) => item.productId === action.payload.productId
-      );
-      if (existsProduct?.productId) {
-        state = state.map((item) => {
-          if (item.productId === action.payload.productId) {
-            item.quantity = action.payload.quantity;
+    addProductToCart: (
+      state,
+      action: PayloadAction<{
+        cartData: TCart;
+        actionType: "increase" | "modify" | "create";
+      }>
+    ) => {
+      const data = action.payload.cartData;
+      const actionType = action.payload.actionType;
+
+      if (actionType === "create") {
+        state.push(data);
+      } else if (actionType === "increase") {
+        state = state.map((cart: TCart) => {
+          if (cart.productId === data.productId) {
+            cart.quantity += data.quantity;
           }
-          return item;
+          return cart;
         });
-      } else {
-        state.push(action.payload);
+        // return state;
+      } else if (actionType === "modify") {
+        state = state.map((cart: TCart) => {
+          if (cart.productId === data.productId) {
+            cart.quantity = data.quantity;
+          }
+          return cart;
+        });
+        // return state;
       }
     },
     deleteProductFromCart: (state, action: PayloadAction<string>) => {
@@ -37,3 +52,17 @@ const cartSlice = createSlice({
 
 export const { addProductToCart, deleteProductFromCart } = cartSlice.actions;
 export default cartSlice.reducer;
+
+// const existsProduct = state.find(
+//   (item) => item.productId === action.payload.productId
+// );
+// if (existsProduct?.productId) {
+//   state = state.map((item) => {
+//     if (item.productId === action.payload.productId) {
+//       item.quantity = action.payload.quantity;
+//     }
+//     return item;
+//   });
+// } else {
+//   state.push(action.payload);
+// }

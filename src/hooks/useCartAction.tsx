@@ -1,62 +1,38 @@
-import { useState } from "react";
-import { addProductToCart } from "../redux/features/Cart";
 import { TProduct } from "../redux/features/Product";
 import { useFTDispatch, useFTSelector } from "../redux/hooks";
 
 const useCartAction = (product: TProduct) => {
+  // Find number of products is available
+  const productQuantity = Number(product.stockQuantity);
+
   const dispatch = useFTDispatch();
   const carts = useFTSelector((state) => state.carts);
-  const currentCart = carts.find((cart) => cart.productId === product._id);
-  const [quantity, setQuantity] = useState<number>(currentCart?.quantity ?? 1);
 
-  const productQuantity = Number(product.stockQuantity);
-  const maxQuantity = productQuantity < 10 ? productQuantity : 10;
+  // Find the current product in cart
+  const isExistsProductOnCart = carts.find(
+    (cart) => cart.productId === product._id
+  );
 
-  const handleCartAction = (action?: string, isDispatch?: boolean) => {
-    if (action) {
-      setQuantity((prev) => {
-        let currentQuantity: number = prev;
-        if (action === "inc" && prev < maxQuantity) {
-          currentQuantity = prev + 1;
-        } else if (action === "dec" && prev > 1) {
-          currentQuantity = prev - 1;
-        }
+  // If found current product in cart set cart quantity value {isExistsProductOnCart?.quantity} or set value 0
+  const cartQuantity = isExistsProductOnCart?.quantity
+    ? Number(isExistsProductOnCart?.quantity)
+    : 0;
 
-        const availableProductQuantity = productQuantity - currentQuantity;
-        if (availableProductQuantity >= 0 && isDispatch) {
-          dispatch(
-            addProductToCart({
-              userId: "user_one",
-              productId: product?._id as string,
-              productPrice: Number(product.price),
-              quantity: currentQuantity,
-            })
-          );
-        } else if (availableProductQuantity < 0) {
-          console.log("product not available");
-        }
-        return currentQuantity;
-      });
-    } else if (action === "" && isDispatch) {
-      const availableProductQuantity = productQuantity - quantity;
-      if (availableProductQuantity >= 0 && isDispatch) {
-        dispatch(
-          addProductToCart({
-            userId: "user_one",
-            productId: product?._id as string,
-            productPrice: Number(product.price),
-            quantity: quantity,
-          })
-        );
-      } else if (availableProductQuantity < 0) {
-        console.log("product not available");
-      }
-    }
-  };
-  console.log(carts);
+  // Create current quantity variable and set value is product quantity.
+  let availableQuantity = productQuantity;
+
+  // If found current product in cart then set the calculate value.
+  if (cartQuantity !== 0) {
+    availableQuantity -= cartQuantity;
+  }
+
   return {
-    handleCartAction,
-    quantity,
+    dispatch,
+    carts,
+    productQuantity,
+    cartQuantity,
+    availableQuantity,
+    isExists: Object.keys(isExistsProductOnCart ?? {}).length ? true : false
   };
 };
 

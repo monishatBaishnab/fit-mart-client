@@ -8,6 +8,8 @@ import FTExternalLink from "../../assets/icons/FTExternalLink";
 import { TProduct } from "../../redux/features/Product";
 import FTTrash from "../../assets/icons/FTTrash";
 import FTStepper from "./FTStepper";
+import { useState } from "react";
+import { addProductToCart, TCart } from "../../redux/features/Cart";
 import useCartAction from "../../hooks/useCartAction";
 
 type FTListProductCard = {
@@ -29,7 +31,37 @@ const FTListProductCard = ({
   disableStepper = true,
 }: FTListProductCard) => {
   const { action, handleAction } = actionButton ?? {};
-  const { handleCartAction, quantity} = useCartAction(product);
+  const { dispatch, cartQuantity, productQuantity } = useCartAction(product);
+  const [quantity, setQuantity] = useState<number>(cartQuantity);
+
+  const handleCartAction = (action: "increase" | "decrease") => {
+    setQuantity((prev) => {
+      let currentQuantity: number = prev;
+      if (
+        action === "increase" &&
+        prev < (productQuantity < 10 ? productQuantity : 10)
+      ) {
+        currentQuantity = prev + 1;
+      } else if (action === "decrease" && prev > 1) {
+        currentQuantity = prev - 1;
+      }
+
+      const cartData: TCart = {
+        productId: product._id as string,
+        productPrice: Number(product.price),
+        quantity: currentQuantity,
+        userId: "user_one",
+      };
+
+      dispatch(
+        addProductToCart({
+          cartData,
+          actionType: "modify",
+        })
+      );
+      return currentQuantity;
+    });
+  };
 
   return (
     <div
@@ -104,11 +136,6 @@ const FTListProductCard = ({
                 name="quantity-in-details"
                 placeholder="1"
                 key="quantity-in-details"
-                maxValue={
-                  Number(product?.stockQuantity) < 10
-                    ? Number(product?.stockQuantity)
-                    : 10
-                }
                 value={quantity}
                 onChangeAction={handleCartAction}
               />

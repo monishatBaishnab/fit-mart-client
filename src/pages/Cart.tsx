@@ -13,8 +13,7 @@ const Cart = () => {
   const dispatch = useFTDispatch();
   const carts = useFTSelector((state) => state.carts);
   let cartProducts: TProduct[] = [];
-  let totalPrice: number = 0;
-
+ 
   if (!isLoading || !isError) {
     cartProducts = carts?.map((cart: TCart) => {
       for (const product of products?.data ?? []) {
@@ -24,13 +23,6 @@ const Cart = () => {
       }
     });
   }
-
-  totalPrice = carts.reduce((price, cart) => {
-    const itemPrice = Number(cart.productPrice) * Number(cart.quantity);
-    return (price += itemPrice);
-  }, 0);
-  
-  console.log(totalPrice, carts);
 
   const handleAction = (id: string) => {
     dispatch(deleteProductFromCart(id));

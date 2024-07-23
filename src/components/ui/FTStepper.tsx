@@ -10,9 +10,8 @@ type TFTStepper = {
   maxValue?: number;
   value: number;
   setValue?: React.Dispatch<React.SetStateAction<number>>;
-
   size?: "sm" | "md" | "lg";
-  onChangeAction?: (action: string, isDispatch:boolean) => void;
+  onChangeAction?: (action: 'increase' | 'decrease') => void;
 };
 
 const FTStepper = ({
@@ -24,15 +23,15 @@ const FTStepper = ({
   size = "lg",
   onChangeAction,
 }: TFTStepper) => {
-  const handleChange = (action: string) => {
+  const handleChange = (action: "increase" | "decrease") => {
     if (onChangeAction) {
-      onChangeAction(action, false);
+      onChangeAction(action);
       return;
     }
 
-    if (action === "inc" && value < maxValue) {
+    if (action === "increase" && value < maxValue) {
       setValue!(value + 1);
-    } else if (action === "dec" && value > 1) {
+    } else if (action === "decrease" && value > 1) {
       setValue!(value - 1);
     }
   };
@@ -52,7 +51,7 @@ const FTStepper = ({
         readOnly
         startContent={
           <FTButton
-            onPress={() => handleChange("dec")}
+            onPress={() => handleChange("decrease")}
             className="bg-transparent transition-all data-[focus-visible=true]:outline-0 data-[hover=true]:bg-indigo-600/5 data-[hover=true]:!opacity-100"
             isIconOnly
             size="sm"
@@ -64,7 +63,7 @@ const FTStepper = ({
         }
         endContent={
           <FTButton
-            onPress={() => handleChange("inc")}
+            onPress={() => handleChange("increase")}
             className="bg-transparent transition-all data-[focus-visible=true]:outline-0 data-[hover=true]:bg-indigo-600/5 data-[hover=true]:!opacity-100"
             isIconOnly
             size="sm"

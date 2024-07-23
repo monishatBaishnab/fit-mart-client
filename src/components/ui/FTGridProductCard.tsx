@@ -5,12 +5,33 @@ import FTCart from "../../assets/icons/FTCart";
 import { TProduct } from "../../redux/features/Product";
 import { useNavigate } from "react-router-dom";
 import FTExternalLink from "../../assets/icons/FTExternalLink";
+import { addProductToCart, TCart } from "../../redux/features/Cart";
 import useCartAction from "../../hooks/useCartAction";
 
 const FTGridProductCard = ({ product }: { product: TProduct }) => {
   const navigate = useNavigate();
-  const { handleCartAction } = useCartAction(product);
-  
+  const { dispatch, availableQuantity, isExists } = useCartAction(product);
+
+  const handleCartAction = () => {
+    if (availableQuantity < 1) {
+      console.log("product not available");
+      return;
+    }
+    const cartData: TCart = {
+      productId: product._id as string,
+      productPrice: Number(product.price),
+      quantity: 1,
+      userId: "user_one",
+    };
+
+    dispatch(
+      addProductToCart({
+        cartData,
+        actionType: isExists ? "increase" : "create",
+      })
+    );
+  };
+
   return (
     <div className="rounded-lg overflow-hidden h-full">
       <div className="bg-slate-100 p-5">
@@ -26,7 +47,7 @@ const FTGridProductCard = ({ product }: { product: TProduct }) => {
           {product?.name}
         </h4>
         <div className="flex items-center justify-between">
-          {Number(product?.stockQuantity) > 0 ? (
+          {availableQuantity > 0 ? (
             <h6 className="text-indigo-600">Available</h6>
           ) : (
             <h6 className="text-red-600">Out of Stock</h6>
@@ -51,7 +72,12 @@ const FTGridProductCard = ({ product }: { product: TProduct }) => {
                 content: "!bg-slate-50 !text-indigo-600 !text-xs",
               }}
             >
-              <FTButton onPress={handleCartAction} isIconOnly size="md" color="secondary">
+              <FTButton
+                onPress={handleCartAction}
+                isIconOnly
+                size="md"
+                color="secondary"
+              >
                 <FTCart
                   classNames={{
                     svg: "w-5 h-5",

@@ -7,6 +7,8 @@ import FTCar from "../../../assets/icons/FTCar";
 import FTStepper from "../../ui/FTStepper";
 import FTButton from "../../ui/FTButton";
 import FTCart from "../../../assets/icons/FTCart";
+import { useState } from "react";
+import { addProductToCart, TCart } from "../../../redux/features/Cart";
 import useCartAction from "../../../hooks/useCartAction";
 
 const DetailsContainer = ({
@@ -16,8 +18,31 @@ const DetailsContainer = ({
   product: TProduct;
   actionButtons?: boolean;
 }) => {
-  const { handleCartAction, quantity } = useCartAction(product);
+  const { dispatch, availableQuantity, isExists} = useCartAction(product);
+  const [quantity, setQuantity] = useState<number>(1);
 
+  // Create function for handle cart action, create | increase
+  const handleCartAction = () => {
+    // If current product quantity less then quantity show error message and return;
+    if (availableQuantity < quantity) {
+      console.log("product not available");
+      return;
+    }
+
+    const cartData: TCart = {
+      productId: product._id as string,
+      productPrice: Number(product.price),
+      quantity: quantity,
+      userId: "user_one",
+    };
+
+    dispatch(
+      addProductToCart({
+        cartData,
+        actionType: isExists ? "increase" : "create",
+      })
+    );
+  };
   return (
     <div
       className={`grid grid-cols-1 ${
@@ -47,14 +72,12 @@ const DetailsContainer = ({
             <FTStock
               classNames={{
                 path: `${
-                  Number(product?.stockQuantity) > 0
-                    ? "fill-indigo-600"
-                    : "fill-red-500"
+                  availableQuantity > 0 ? "fill-indigo-600" : "fill-red-500"
                 }`,
               }}
             />
             <span className="text-slate-500 font-medium">
-              {Number(product?.stockQuantity) > 0 ? "In Stock" : "Out of stock"}
+              {availableQuantity > 0 ? "In Stock" : "Out of stock"}
             </span>
           </div>
           <div className="flex items-center gap-1">
@@ -79,7 +102,7 @@ const DetailsContainer = ({
           </span>
 
           <span className="text-slate-500">Available Product</span>
-          <span className="text-slate-800">{product?.stockQuantity} Pics</span>
+          <span className="text-slate-800">{availableQuantity} Pics</span>
         </div>
 
         {actionButtons ? (
@@ -89,12 +112,13 @@ const DetailsContainer = ({
               placeholder="1"
               key="price"
               value={quantity}
-              onChangeAction={handleCartAction}
+              setValue={setQuantity}
+              maxValue={availableQuantity < 10 ? availableQuantity : 10}
             />
 
             <div>
               <FTButton
-                onPress={() => handleCartAction('', true)}
+                onPress={handleCartAction}
                 size="lg"
                 color="primary"
                 startContent={<FTCart classNames={{ path: "stroke-white" }} />}
