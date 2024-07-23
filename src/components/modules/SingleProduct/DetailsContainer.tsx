@@ -7,7 +7,7 @@ import FTCar from "../../../assets/icons/FTCar";
 import FTStepper from "../../ui/FTStepper";
 import FTButton from "../../ui/FTButton";
 import FTCart from "../../../assets/icons/FTCart";
-import { useState } from "react";
+import useCartAction from "../../../hooks/useCartAction";
 
 const DetailsContainer = ({
   product,
@@ -16,7 +16,8 @@ const DetailsContainer = ({
   product: TProduct;
   actionButtons?: boolean;
 }) => {
-  const [quantity, setQuantity] = useState<number>(1);
+  const { handleCartAction, quantity } = useCartAction(product);
+
   return (
     <div
       className={`grid grid-cols-1 ${
@@ -87,17 +88,13 @@ const DetailsContainer = ({
               name="price"
               placeholder="1"
               key="price"
-              maxValue={
-                Number(product?.stockQuantity) < 10
-                  ? Number(product?.stockQuantity)
-                  : 10
-              }
               value={quantity}
-              setValue={setQuantity}
+              onChangeAction={handleCartAction}
             />
 
             <div>
               <FTButton
+                onPress={() => handleCartAction('', true)}
                 size="lg"
                 color="primary"
                 startContent={<FTCart classNames={{ path: "stroke-white" }} />}

@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { ftApi } from "./api";
 import productReducer from './features/Product'
+import cartReducer from './features/Cart'
 
 export const store = configureStore({
     reducer: {
         products: productReducer,
+        carts: cartReducer,
         [ftApi.reducerPath]: ftApi.reducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(ftApi.middleware)

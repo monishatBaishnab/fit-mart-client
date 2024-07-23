@@ -7,6 +7,7 @@ import {
   TableRow,
   TableCell,
   Chip,
+  Tooltip,
 } from "@nextui-org/react";
 import FTButton from "../../ui/FTButton";
 import FTEdit from "../../../assets/icons/FTEdit";
@@ -27,7 +28,10 @@ const columns = [
 const ProductsTable = ({
   handleActions,
 }: {
-  handleActions: (action: "edit" | "delete"| "details", payload?: TProduct) => void;
+  handleActions: (
+    action: "edit" | "delete" | "details",
+    payload?: TProduct
+  ) => void;
 }) => {
   const { data, isLoading } = useGetProductsQuery({}) ?? {};
 
@@ -54,32 +58,65 @@ const ProductsTable = ({
       case "actions":
         return (
           <div className="flex items-center gap-2 justify-end">
-            <FTButton
-              isIconOnly
-              size="md"
-              color="primary"
-              onClick={() => handleActions("details", product)}
+            <Tooltip
+              content="View Details"
+              placement="top-end"
+              radius="sm"
+              classNames={{
+                content: "!bg-indigo-600 !text-white !text-xs",
+              }}
             >
-              <FTExternalLink classNames={{ path: "stroke-white", svg: "h-4 w-4" }} />
-            </FTButton> 
-            <FTButton
-              isIconOnly
-              size="md"
-              color="primary"
-              className="bg-green-500 data-[hover=true]:bg-green-500 data-[hover=true]:!ring-green-500 data-[pressed=true]:!bg-green-500"
-              onClick={() => handleActions("edit", product)}
+              <FTButton
+                isIconOnly
+                size="md"
+                color="primary"
+                onClick={() => handleActions("details", product)}
+              >
+                <FTExternalLink
+                  classNames={{ path: "stroke-white", svg: "h-4 w-4" }}
+                />
+              </FTButton>
+            </Tooltip>
+
+            <Tooltip
+              content="Update Product"
+              placement="top-end"
+              radius="sm"
+              classNames={{
+                content: "!bg-green-500 !text-white !text-xs",
+              }}
             >
-              <FTEdit classNames={{ path: "stroke-white", svg: "h-4 w-4" }} />
-            </FTButton>
-            <FTButton
-              size="md"
-              isIconOnly
-              color="primary"
-              className="bg-red-500 data-[hover=true]:bg-red-500 data-[hover=true]:!ring-red-500 data-[pressed=true]:!bg-red-500"
-              onClick={() => handleActions("delete")}
+              <FTButton
+                isIconOnly
+                size="md"
+                color="primary"
+                className="bg-green-500 data-[hover=true]:bg-green-500 data-[hover=true]:!ring-green-500 data-[pressed=true]:!bg-green-500"
+                onClick={() => handleActions("edit", product)}
+              >
+                <FTEdit classNames={{ path: "stroke-white", svg: "h-4 w-4" }} />
+              </FTButton>
+            </Tooltip>
+
+            <Tooltip
+              content="Delete Product"
+              placement="top-end"
+              radius="sm"
+              classNames={{
+                content: "!bg-red-500 !text-white !text-xs",
+              }}
             >
-              <FTTrash classNames={{ path: "stroke-white", svg: "h-5 w-5" }} />
-            </FTButton>
+              <FTButton
+                size="md"
+                isIconOnly
+                color="primary"
+                className="bg-red-500 data-[hover=true]:bg-red-500 data-[hover=true]:!ring-red-500 data-[pressed=true]:!bg-red-500"
+                onClick={() => handleActions("delete", product)}
+              >
+                <FTTrash
+                  classNames={{ path: "stroke-white", svg: "h-5 w-5" }}
+                />
+              </FTButton>
+            </Tooltip>
           </div>
         );
       default:

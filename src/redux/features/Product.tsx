@@ -24,25 +24,27 @@ export type TProduct = {
   returnPolicy: string;
 };
 
-const initialState : TProduct[] = [{
-  specifications: {
-    dimensions: "",
-    weight: "",
-    material: "",
-  },
-  manufacturerDetails: {},
-  name: "",
-  brand: "",
-  price: "",
-  stockQuantity: "",
-  description: "",
-  category: "",
-  images: "",
-  rating: "",
-  features: [],
-  warranty: "",
-  returnPolicy: "",
-}];
+// {
+//   specifications: {
+//     dimensions: "",
+//     weight: "",
+//     material: "",
+//   },
+//   manufacturerDetails: {},
+//   name: "",
+//   brand: "",
+//   price: "",
+//   stockQuantity: "",
+//   description: "",
+//   category: "",
+//   images: "",
+//   rating: "",
+//   features: [],
+//   warranty: "",
+//   returnPolicy: "",
+// }
+
+const initialState : TProduct[] = [];
 
 const productSlice = createSlice({
   name: "product",

@@ -53,6 +53,7 @@ const Products = () => {
     }
   };
 
+  
   return (
     <div>
       <FTBreadcrumbs />

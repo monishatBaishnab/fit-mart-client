@@ -7,11 +7,11 @@ export const ftApi = createApi({
     // baseUrl: "https://fit-mart-server-phi.vercel.app/",
     baseUrl: "http://localhost:5000/",
   }),
- 
+  tagTypes: ["getProducts", "getProduct"],
   endpoints: (builder) => {
-
     return {
       getProducts: builder.query({
+        providesTags: ["getProducts"],
         query: (query) => {
           const { minPrice, maxPrice, categories, sort, search } = query ?? {};
           const params = new URLSearchParams();
@@ -37,6 +37,7 @@ export const ftApi = createApi({
         },
       }),
       getProduct: builder.query({
+        providesTags: ["getProduct"],
         query: (id) => ({
           url: `products/${id}`,
           method: "GET",
@@ -50,29 +51,40 @@ export const ftApi = createApi({
             body: product,
           };
         },
+        invalidatesTags: ["getProducts"],
       }),
       editProduct: builder.mutation({
         query: ({ id, product }: { id: string; product: TProduct }) => {
-          
           return {
             url: `products/${id}`,
             method: "PUT",
             body: product,
           };
         },
+        invalidatesTags: ["getProducts"],
+      }),
+      deleteProduct: builder.mutation({
+        query: (id:string) => {
+          return {
+            url: `products/${id}`,
+            method: "DELETE",
+          };
+        },
+        invalidatesTags: ["getProducts"],
       }),
     };
   },
 });
 
-// export const { useGetProductsQuery } = ftApi;
-
 type UseGetProductsQueryType = typeof ftApi.endpoints.getProducts.useQuery;
 type UseGetProductQueryType = typeof ftApi.endpoints.getProduct.useQuery;
 type UseCreateProductMutationType =
   typeof ftApi.endpoints.createProduct.useMutation;
-  type UseEditProductMutationType =
+type UseEditProductMutationType =
   typeof ftApi.endpoints.editProduct.useMutation;
+
+type UseDeleteProductMutationType =
+  typeof ftApi.endpoints.deleteProduct.useMutation;
 
 const useTypedGetProductsQuery: UseGetProductsQueryType =
   ftApi.endpoints.getProducts.useQuery;
@@ -80,10 +92,17 @@ const useTypedGetProductQuery: UseGetProductQueryType =
   ftApi.endpoints.getProduct.useQuery;
 const useTypedCreateProductMutation: UseCreateProductMutationType =
   ftApi.endpoints.createProduct.useMutation;
-  const useTypedEditProductMutation: UseEditProductMutationType =
+
+const useTypedDeleteProductMutation: UseDeleteProductMutationType =
+  ftApi.endpoints.deleteProduct.useMutation;
+
+const useTypedEditProductMutation: UseEditProductMutationType =
   ftApi.endpoints.editProduct.useMutation;
 
 export { useTypedGetProductsQuery as useGetProductsQuery };
 export { useTypedGetProductQuery as useGetProductQuery };
 export { useTypedCreateProductMutation as useCreateProductMutation };
 export { useTypedEditProductMutation as useEditProductMutation };
+
+export { useTypedDeleteProductMutation as useDeleteProductMutation };
+

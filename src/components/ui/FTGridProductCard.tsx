@@ -5,14 +5,20 @@ import FTCart from "../../assets/icons/FTCart";
 import { TProduct } from "../../redux/features/Product";
 import { useNavigate } from "react-router-dom";
 import FTExternalLink from "../../assets/icons/FTExternalLink";
+import useCartAction from "../../hooks/useCartAction";
 
 const FTGridProductCard = ({ product }: { product: TProduct }) => {
   const navigate = useNavigate();
+  const { handleCartAction } = useCartAction(product);
+  
   return (
     <div className="rounded-lg overflow-hidden h-full">
       <div className="bg-slate-100 p-5">
         <div className="w-full h-[240px] overflow-hidden rounded-lg bg-white flex items-center justify-center">
-          <img className="w-full h-full !object-contain" src={product?.images} />
+          <img
+            className="w-full h-full !object-contain"
+            src={product?.images}
+          />
         </div>
       </div>
       <div className="space-y-2 p-5 border border-slate-200  border-t-0 rounded-b-lg">
@@ -29,7 +35,7 @@ const FTGridProductCard = ({ product }: { product: TProduct }) => {
             <FTStar
               classNames={{ svg: "h-4 w-4", path: "stroke-yellow-500" }}
             />
-            <span className="text-slate-800">{product?.rating}/5</span>
+            <span className="text-slate-800">{product?.rating ?? 0}/5</span>
           </div>
         </div>
         <div className="flex items-center justify-between gap-2">
@@ -45,7 +51,7 @@ const FTGridProductCard = ({ product }: { product: TProduct }) => {
                 content: "!bg-slate-50 !text-indigo-600 !text-xs",
               }}
             >
-              <FTButton isIconOnly size="md" color="secondary">
+              <FTButton onPress={handleCartAction} isIconOnly size="md" color="secondary">
                 <FTCart
                   classNames={{
                     svg: "w-5 h-5",
@@ -62,8 +68,15 @@ const FTGridProductCard = ({ product }: { product: TProduct }) => {
                 content: "!bg-indigo-600 !text-white !text-xs",
               }}
             >
-              <FTButton onPress={() => navigate(`/products/${product?._id as string}`)} isIconOnly size="md" color="primary">
-                <FTExternalLink classNames={{ svg: "w-5 h-5", path: "stroke-white" }} />
+              <FTButton
+                onPress={() => navigate(`/products/${product?._id as string}`)}
+                isIconOnly
+                size="md"
+                color="primary"
+              >
+                <FTExternalLink
+                  classNames={{ svg: "w-5 h-5", path: "stroke-white" }}
+                />
               </FTButton>
             </Tooltip>
           </div>

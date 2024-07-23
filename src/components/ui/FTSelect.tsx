@@ -4,7 +4,7 @@ const FTSelect : React.ComponentType<SelectProps> = extendVariants(Select, {
   variants: {
     color: {
       primary: {
-        label: "!cursor-text !text-base font-medium !top-[20px] text-slate-700",
+        label: "!cursor-text !text-base font-medium !top-6 text-slate-700",
         base: "justify-start data-[has-label=true]:mt-6 mt-6",
         value: 'text-slate-600',
         trigger: [

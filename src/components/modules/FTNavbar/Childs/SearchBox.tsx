@@ -3,16 +3,24 @@ import FTSearch from "../../../../assets/icons/FTSearch";
 import FTButton from "../../../ui/FTButton";
 import FTModal from "../../../ui/FTModal";
 import FTInput from "../../../ui/FTInput";
-import FTSearchProductCard from "../../../ui/FTSearchProductCard";
+import FTListProductCard from "../../../ui/FTListProductCard";
 import FTEmptyCard from "../../../ui/FTEmptyCard";
 import { useGetProductsQuery } from "../../../../redux/api";
 import { useState } from "react";
 import { TProduct } from "../../../../redux/features/Product";
+import { useNavigate } from "react-router-dom";
 const SearchBox = () => {
+  const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [search, setSearch] = useState<string>("");
   const { data, isLoading } =
     useGetProductsQuery({ search: search ? search : " " }) ?? {};
+
+  const handleAction = (id: string) => {
+    navigate(`/products/${id}`);
+    onClose!();
+    setSearch("");
+  };
 
   return (
     <div className="">
@@ -58,11 +66,13 @@ const SearchBox = () => {
           <div className="my-8">
             {data?.data?.length && !isLoading ? (
               data?.data?.map((product: TProduct) => (
-                <FTSearchProductCard
-                  states={{ search, setSearch }}
-                  onClose={onClose}
+                <FTListProductCard
                   key={product?._id}
                   product={product}
+                  actionButton={{
+                    action: 'details',
+                    handleAction
+                  }}
                 />
               ))
             ) : (

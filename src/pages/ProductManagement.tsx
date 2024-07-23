@@ -14,7 +14,7 @@ import FTModal from "../components/ui/FTModal";
 import { TProduct } from "../redux/features/Product";
 import DetailsContainer from "../components/modules/SingleProduct/DetailsContainer";
 import { findManufacturerDetails } from "../assets/data/manufacturerDetails";
-import { useCreateProductMutation, useEditProductMutation } from "../redux/api";
+import { useCreateProductMutation, useDeleteProductMutation, useEditProductMutation } from "../redux/api";
 
 const initialProduct = {
   specifications: {
@@ -41,6 +41,7 @@ const ProductManagement = () => {
   const [modalTitle, setModalTitle] = useState<string>("");
   const [createProduct, createResponse] = useCreateProductMutation();
   const [editProduct, editResponse] = useEditProductMutation();
+  const [deleteProduct, deleteResponse] = useDeleteProductMutation();
   const [action, setAction] = useState<"edit" | "create">();
   const [product, setProduct] = useState<TProduct>(initialProduct);
   const {
@@ -48,6 +49,7 @@ const ProductManagement = () => {
     onOpen: onDetailsOpen,
     isOpen: isDetailsClose,
   } = useDisclosure();
+
 
   const handleOpen = () => {
     onOpen();
@@ -69,7 +71,7 @@ const ProductManagement = () => {
       setModalTitle("Update Product");
     }
     if (action === "delete") {
-      console.log("delete");
+      deleteProduct(payload?._id as string);
     }
     if (action === "details") {
       setProduct(payload as TProduct);
