@@ -1,31 +1,63 @@
+import { useState } from "react";
 import FTBreadcrumbs from "../components/ui/FTBreadcrumbs";
+import FTButton from "../components/ui/FTButton";
 import FTEmptyCard from "../components/ui/FTEmptyCard";
 import FTListProductCard from "../components/ui/FTListProductCard";
 import FTSelect from "../components/ui/FTSelect";
 import FTSelectItem from "../components/ui/FTSelectItem";
-import { useGetProductsQuery } from "../redux/api";
-import { deleteProductFromCart, TCart } from "../redux/features/Cart";
+import { useCreatePurchaseMutation, useGetProductsQuery } from "../redux/api";
+import {
+  deleteAllProductFromCart,
+  deleteProductFromCart,
+  TCart,
+} from "../redux/features/Cart";
 import { TProduct } from "../redux/features/Product";
-import { useFTDispatch, useFTSelector } from "../redux/hooks";
+import useCartAction from "../hooks/useCartAction";
+import toast from "react-hot-toast";
 
 const Cart = () => {
   const { data: products, isLoading, isError } = useGetProductsQuery(undefined);
-  const dispatch = useFTDispatch();
-  const carts = useFTSelector((state) => state.carts);
+  const { carts, dispatch } = useCartAction();
+  const [paymentMethod, setPaymentMethod] = useState("cash_on_delivery");
+  const [createPurchase] = useCreatePurchaseMutation();
   let cartProducts: TProduct[] = [];
- 
+
   if (!isLoading || !isError) {
     cartProducts = carts?.map((cart: TCart) => {
       for (const product of products?.data ?? []) {
-        if (product?._id === cart?.productId) {
+        if (product?._id === cart?.product) {
           return product;
         }
       }
     });
   }
 
+  const totalPrice: number = carts.reduce((price, cart) => {
+    const cartPrice = Number(cart.price) * Number(cart.quantity);
+    return (price += cartPrice);
+  }, 0);
+
   const handleAction = (id: string) => {
     dispatch(deleteProductFromCart(id));
+  };
+
+  const handleConfirmOrder = async () => {
+    const cartsData = {
+      user: "user_one",
+      paymentMethod,
+      totalPrice,
+      products: carts,
+    };
+    if (carts?.length < 1) {
+      toast.error("Please add product on cart.");
+      return;
+    }
+    const res = await createPurchase(cartsData);
+
+    if (res?.data?.success) {
+      dispatch(deleteAllProductFromCart());
+      console.log("Your Order Approved.");
+    }
   };
 
   return (
@@ -47,7 +79,7 @@ const Cart = () => {
                     base: "sm:flex-row md:!flex-col lg:!flex-row",
                     img: "md:w-40 md:basis-full lg:w-20 lg:basis-20",
                   }}
-                  key={product._id}
+                  key={product?._id}
                   product={product}
                   disableRing
                   disableStepper={false}
@@ -62,20 +94,24 @@ const Cart = () => {
           <div className="md:col-span-2">
             <h3 className="text-3xl font-semibold text-slate-700">My Cart</h3>
             <div className="space-y-2 mt-5">
-              {/* <h4>Total Price: {totalPrice.toFixed(2)}</h4> */}
+              <h4>Total Price: {totalPrice.toFixed(2)}</h4>
               <div>
                 <FTSelect
                   // onChange={(e) => handleChange(e)}
                   name="payment-type"
                   placeholder="Select a payment type."
                   label="Payment Type"
-                  defaultSelectedKeys={["cash-on-delivery"]}
+                  defaultSelectedKeys={["cash_on_delivery"]}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
                 >
-                  <FTSelectItem key="cash-on-delivery">
+                  <FTSelectItem key="cash_on_delivery">
                     Cash On Delivery
                   </FTSelectItem>
                 </FTSelect>
               </div>
+              <FTButton onPress={handleConfirmOrder} color="primary" size="lg">
+                Confirm Order
+              </FTButton>
             </div>
           </div>
         </div>

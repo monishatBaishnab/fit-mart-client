@@ -18,7 +18,7 @@ const DetailsContainer = ({
   product: TProduct;
   actionButtons?: boolean;
 }) => {
-  const { dispatch, availableQuantity, isExists} = useCartAction(product);
+  const { dispatch, availableQuantity, isExists } = useCartAction(product);
   const [quantity, setQuantity] = useState<number>(1);
 
   // Create function for handle cart action, create | increase
@@ -30,10 +30,10 @@ const DetailsContainer = ({
     }
 
     const cartData: TCart = {
-      productId: product._id as string,
-      productPrice: Number(product.price),
+      product: product._id as string,
+      price: Number(product.price),
       quantity: quantity,
-      userId: "user_one",
+      // userId: "user_one",
     };
 
     dispatch(
@@ -118,6 +118,7 @@ const DetailsContainer = ({
 
             <div>
               <FTButton
+                isDisabled={availableQuantity < 1}
                 onPress={handleCartAction}
                 size="lg"
                 color="primary"

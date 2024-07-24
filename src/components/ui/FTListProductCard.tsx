@@ -47,10 +47,9 @@ const FTListProductCard = ({
       }
 
       const cartData: TCart = {
-        productId: product._id as string,
-        productPrice: Number(product.price),
+        product: product._id as string,
+        price: Number(product.price),
         quantity: currentQuantity,
-        userId: "user_one",
       };
 
       dispatch(

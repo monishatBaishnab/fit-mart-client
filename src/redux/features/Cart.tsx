@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type TCart = {
-  productId: string;
-  productPrice: number;
+  // userId: string;
+  product: string;
+  price: number;
   quantity: number;
-  userId: string;
 };
 
 const initialState: TCart[] = [];
@@ -27,42 +27,32 @@ const cartSlice = createSlice({
         state.push(data);
       } else if (actionType === "increase") {
         state = state.map((cart: TCart) => {
-          if (cart.productId === data.productId) {
+          if (cart.product === data.product) {
             cart.quantity += data.quantity;
           }
           return cart;
         });
-        // return state;
       } else if (actionType === "modify") {
         state = state.map((cart: TCart) => {
-          if (cart.productId === data.productId) {
+          if (cart.product === data.product) {
             cart.quantity = data.quantity;
           }
           return cart;
         });
-        // return state;
+      } else if (actionType === "clear") {
+        state = [];
       }
     },
     deleteProductFromCart: (state, action: PayloadAction<string>) => {
-      state = state.filter((item) => item.productId !== action.payload);
+      state = state.filter((item) => item.product !== action.payload);
+      return state;
+    },
+    deleteAllProductFromCart: (state) => {
+      state = [];
       return state;
     },
   },
 });
 
-export const { addProductToCart, deleteProductFromCart } = cartSlice.actions;
+export const { addProductToCart, deleteProductFromCart, deleteAllProductFromCart} = cartSlice.actions;
 export default cartSlice.reducer;
-
-// const existsProduct = state.find(
-//   (item) => item.productId === action.payload.productId
-// );
-// if (existsProduct?.productId) {
-//   state = state.map((item) => {
-//     if (item.productId === action.payload.productId) {
-//       item.quantity = action.payload.quantity;
-//     }
-//     return item;
-//   });
-// } else {
-//   state.push(action.payload);
-// }

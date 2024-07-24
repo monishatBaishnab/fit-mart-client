@@ -18,10 +18,10 @@ const FTGridProductCard = ({ product }: { product: TProduct }) => {
       return;
     }
     const cartData: TCart = {
-      productId: product._id as string,
-      productPrice: Number(product.price),
+      product: product._id as string,
+      price: Number(product.price),
       quantity: 1,
-      userId: "user_one",
+      // userId: "user_one",
     };
 
     dispatch(
@@ -73,6 +73,7 @@ const FTGridProductCard = ({ product }: { product: TProduct }) => {
               }}
             >
               <FTButton
+                isDisabled={availableQuantity < 1}
                 onPress={handleCartAction}
                 isIconOnly
                 size="md"
