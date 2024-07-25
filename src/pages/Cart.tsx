@@ -13,9 +13,11 @@ import {
 } from "../redux/features/Cart";
 import { TProduct } from "../redux/features/Product";
 import useCartAction from "../hooks/useCartAction";
-import toast from "react-hot-toast";
+import useHotToast from "../hooks/useHotToast";
+import { Divider } from "@nextui-org/react";
 
 const Cart = () => {
+  const { ftToast } = useHotToast();
   const { data: products, isLoading, isError } = useGetProductsQuery(undefined);
   const { carts, dispatch } = useCartAction();
   const [paymentMethod, setPaymentMethod] = useState("cash_on_delivery");
@@ -39,24 +41,33 @@ const Cart = () => {
 
   const handleAction = (id: string) => {
     dispatch(deleteProductFromCart(id));
+    ftToast("success", "Success", "Product removed from your cart.");
   };
 
   const handleConfirmOrder = async () => {
     const cartsData = {
       user: "user_one",
       paymentMethod,
-      totalPrice,
+      totalPrice: totalPrice + 15,
       products: carts,
     };
     if (carts?.length < 1) {
-      toast.error("Please add product on cart.");
+      ftToast(
+        "error",
+        "Error",
+        "Cannot place an order. Your cart is currently empty."
+      );
       return;
     }
     const res = await createPurchase(cartsData);
 
     if (res?.data?.success) {
       dispatch(deleteAllProductFromCart());
-      console.log("Your Order Approved.");
+      ftToast(
+        "success",
+        "Success",
+        "Your order has been approved and is being processed."
+      );
     }
   };
 
@@ -64,6 +75,8 @@ const Cart = () => {
     <div>
       <FTBreadcrumbs />
       <div className="container">
+        <h2 className="text-3xl font-semibold text-slate-700 mb-5">Yor Cart</h2>
+        
         <div className="grid md:grid-cols-5 gap-5">
           <div className="md:col-span-3 space-y-5">
             {isLoading || isError || !cartProducts?.length ? (
@@ -92,15 +105,37 @@ const Cart = () => {
             )}
           </div>
           <div className="md:col-span-2">
-            <h3 className="text-3xl font-semibold text-slate-700">My Cart</h3>
+            <h5 className="text-lg font-semibold text-slate-700">
+              Order Summery
+            </h5>
             <div className="space-y-2 mt-5">
-              <h4>Total Price: {totalPrice.toFixed(2)}</h4>
+              <div className="space-y-3">
+                <h5 className="text-slate-500 flex items-center justify-between font-medium">
+                  <span>Subtotal</span>{" "}
+                  <span className="text-slate-900">
+                    {totalPrice.toFixed(2)}$
+                  </span>
+                </h5>
+                <h5 className="text-slate-500 flex items-center justify-between font-medium">
+                  <span>Discount</span>{" "}
+                  <span className="text-red-500">0.00$</span>
+                </h5>
+                <h5 className="text-slate-500 flex items-center justify-between font-medium">
+                  <span>Delivery Fee</span>{" "}
+                  <span className="text-slate-900">15.00$</span>
+                </h5>
+                <Divider orientation="horizontal" />{" "}
+                <h5 className="flex items-center justify-between font-medium text-slate-900">
+                  <span>Total</span>{" "}
+                  <span>{(totalPrice + 15).toFixed(2)}$</span>
+                </h5>
+              </div>
               <div>
                 <FTSelect
                   // onChange={(e) => handleChange(e)}
                   name="payment-type"
                   placeholder="Select a payment type."
-                  label="Payment Type"
+                  aria-labelledby="payment-method"
                   defaultSelectedKeys={["cash_on_delivery"]}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 >
@@ -109,7 +144,13 @@ const Cart = () => {
                   </FTSelectItem>
                 </FTSelect>
               </div>
-              <FTButton onPress={handleConfirmOrder} color="primary" size="lg">
+              <FTButton
+                fullWidth
+                onPress={handleConfirmOrder}
+                color="primary"
+                size="lg"
+                className="!mt-5"
+              >
                 Confirm Order
               </FTButton>
             </div>

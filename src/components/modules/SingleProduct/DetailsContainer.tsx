@@ -10,6 +10,7 @@ import FTCart from "../../../assets/icons/FTCart";
 import { useState } from "react";
 import { addProductToCart, TCart } from "../../../redux/features/Cart";
 import useCartAction from "../../../hooks/useCartAction";
+import useHotToast from "../../../hooks/useHotToast";
 
 const DetailsContainer = ({
   product,
@@ -18,6 +19,7 @@ const DetailsContainer = ({
   product: TProduct;
   actionButtons?: boolean;
 }) => {
+  const { ftToast } = useHotToast();
   const { dispatch, availableQuantity, isExists } = useCartAction(product);
   const [quantity, setQuantity] = useState<number>(1);
 
@@ -25,7 +27,11 @@ const DetailsContainer = ({
   const handleCartAction = () => {
     // If current product quantity less then quantity show error message and return;
     if (availableQuantity < quantity) {
-      console.log("product not available");
+      ftToast(
+        "error",
+        "Error",
+        "Sorry, this product is currently out of stock."
+      );
       return;
     }
 
@@ -42,6 +48,7 @@ const DetailsContainer = ({
         actionType: isExists ? "increase" : "create",
       })
     );
+    ftToast("success", "Success", "Product successfully added to your cart!");
   };
   return (
     <div

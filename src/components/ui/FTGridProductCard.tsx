@@ -7,14 +7,20 @@ import { useNavigate } from "react-router-dom";
 import FTExternalLink from "../../assets/icons/FTExternalLink";
 import { addProductToCart, TCart } from "../../redux/features/Cart";
 import useCartAction from "../../hooks/useCartAction";
+import useHotToast from "../../hooks/useHotToast";
 
 const FTGridProductCard = ({ product }: { product: TProduct }) => {
+  const { ftToast } = useHotToast();
   const navigate = useNavigate();
   const { dispatch, availableQuantity, isExists } = useCartAction(product);
 
   const handleCartAction = () => {
     if (availableQuantity < 1) {
-      console.log("product not available");
+      ftToast(
+        "error",
+        "Error",
+        "Sorry, this product is currently out of stock."
+      );
       return;
     }
     const cartData: TCart = {
@@ -30,6 +36,7 @@ const FTGridProductCard = ({ product }: { product: TProduct }) => {
         actionType: isExists ? "increase" : "create",
       })
     );
+    ftToast("success", "Success", "Product successfully added to your cart!");
   };
 
   return (

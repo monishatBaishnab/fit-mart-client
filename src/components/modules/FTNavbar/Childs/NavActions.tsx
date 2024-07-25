@@ -11,9 +11,11 @@ import FTUsers from "../../../../assets/icons/FTUsers";
 import FTList from "../../../../assets/icons/FTList";
 import FTSettings from "../../../../assets/icons/FTSettings";
 import SearchBox from "./SearchBox";
+import useHotToast from "../../../../hooks/useHotToast";
 
 const NavActions = () => {
   const navigate = useNavigate();
+  const { ftToast } = useHotToast();
 
   const renderStartIcon = (key: string) => {
     if (key === "home") {
@@ -25,6 +27,24 @@ const NavActions = () => {
     } else {
       return FTSettings;
     }
+  };
+
+  const handleToast = () => {
+    ftToast(
+      "success",
+      "Success",
+      "Order Placed Successfully. Thank you for shopping with us."
+    );
+    ftToast(
+      "warning",
+      "Warning",
+      "Order will not delivered in this pincode. Try other pincode"
+    );
+    ftToast(
+      "error",
+      "Error",
+      "Payment for order could not be proceed. Please try again."
+    );
   };
 
   return (
@@ -49,6 +69,7 @@ const NavActions = () => {
       </div>
       <div>
         <FTButton
+          onPress={handleToast}
           size="lg"
           color="secondary"
           isIconOnly

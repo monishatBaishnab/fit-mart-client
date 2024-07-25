@@ -14,7 +14,12 @@ import FTModal from "../components/ui/FTModal";
 import { TProduct } from "../redux/features/Product";
 import DetailsContainer from "../components/modules/SingleProduct/DetailsContainer";
 import { findManufacturerDetails } from "../assets/data/manufacturerDetails";
-import { useCreateProductMutation, useDeleteProductMutation, useEditProductMutation } from "../redux/api";
+import {
+  useCreateProductMutation,
+  useDeleteProductMutation,
+  useEditProductMutation,
+} from "../redux/api";
+import useHotToast from "../hooks/useHotToast";
 
 const initialProduct = {
   specifications: {
@@ -38,6 +43,7 @@ const initialProduct = {
 
 const ProductManagement = () => {
   const { onClose, onOpen, isOpen } = useDisclosure();
+  const { ftToast } = useHotToast();
   const [modalTitle, setModalTitle] = useState<string>("");
   const [createProduct, createResponse] = useCreateProductMutation();
   const [editProduct, editResponse] = useEditProductMutation();
@@ -50,7 +56,6 @@ const ProductManagement = () => {
     isOpen: isDetailsClose,
   } = useDisclosure();
 
-
   const handleOpen = () => {
     onOpen();
     setProduct(initialProduct);
@@ -58,7 +63,7 @@ const ProductManagement = () => {
     setAction("create");
   };
 
-  const handleActions = (
+  const handleActions = async (
     action: "edit" | "delete" | "details",
     payload?: TProduct
   ) => {
@@ -71,7 +76,10 @@ const ProductManagement = () => {
       setModalTitle("Update Product");
     }
     if (action === "delete") {
-      deleteProduct(payload?._id as string);
+      const res = await deleteProduct(payload?._id as string);
+      if (res?.data?.success) {
+        ftToast("success", "Success", "Product deleted successfully!");
+      }
     }
     if (action === "details") {
       setProduct(payload as TProduct);
@@ -106,16 +114,22 @@ const ProductManagement = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log(action);
     const manufacturerDetails = findManufacturerDetails(product?.brand);
     if (action === "edit") {
-      editProduct({
+      const res = await editProduct({
         product: { ...product, manufacturerDetails },
         id: product?._id as string,
       });
-    } else if(action === 'create') {
-      createProduct({ ...product, manufacturerDetails });
+      if (res?.data?.success) {
+        ftToast("success", "Success", "Product updated successfully!");
+      }
+    } else if (action === "create") {
+      const res = await createProduct({ ...product, manufacturerDetails });
+      if (res?.data?.success) {
+        ftToast("success", "Success", "Product created successfully!");
+      }
     }
 
     onClose();
