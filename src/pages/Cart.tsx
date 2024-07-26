@@ -15,6 +15,7 @@ import { TProduct } from "../redux/features/Product";
 import useCartAction from "../hooks/useCartAction";
 import useHotToast from "../hooks/useHotToast";
 import { Divider } from "@nextui-org/react";
+import Swal from "sweetalert2";
 
 const Cart = () => {
   const { ftToast } = useHotToast();
@@ -40,8 +41,27 @@ const Cart = () => {
   }, 0);
 
   const handleAction = (id: string) => {
-    dispatch(deleteProductFromCart(id));
-    ftToast("success", "Success", "Product removed from your cart.");
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Your product will be removed from your cart.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      customClass: {
+        confirmButton: "!bg-indigo-600",
+        cancelButton: "!bg-red-500",
+        container: "!bg-indigo-600/10 backdrop-blur-sm",
+        title: "text-slate-700",
+        footer: "",
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        dispatch(deleteProductFromCart(id));
+
+        ftToast("success", "Success", "Product removed from your cart.");
+
+      }
+    });
   };
 
   const handleConfirmOrder = async () => {
@@ -76,7 +96,7 @@ const Cart = () => {
       <FTBreadcrumbs />
       <div className="container">
         <h2 className="text-3xl font-semibold text-slate-700 mb-5">Yor Cart</h2>
-        
+
         <div className="grid md:grid-cols-5 gap-5">
           <div className="md:col-span-3 space-y-5">
             {isLoading || isError || !cartProducts?.length ? (

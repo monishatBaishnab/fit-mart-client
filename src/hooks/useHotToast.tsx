@@ -44,7 +44,7 @@ const useHotToast = () => {
         animate={t.visible ? "open" : "closed"}
       >
         <div
-          className={`relative max-w-[400px] flex items-center gap-5 p-5 rounded-md border border-l-4 ${variantClasses[variant]}`}
+          className={`relative max-w-[400px] flex items-center gap-5 px-5 py-3 rounded-md border border-l-4 ${variantClasses[variant]}`}
         >
           <div>
             {variantIcons[variant]}

@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import categoriesData from "../assets/data/categories";
 import { useGetProductsQuery } from "../redux/api";
 import { TProduct } from "../redux/features/Product";
+import FTSectionTitle from "../components/ui/FTSectionTitle";
 
 const mosaicImages = [
   {
@@ -101,11 +102,8 @@ const Home = () => {
         </div>
       </Parallax>
 
-      <div className="container">
-        <h2 className="text-3xl font-semibold mb-7 text-center">
-          Explore Our{" "}
-          <span className="text-indigo-500">Fitness Categories</span>
-        </h2>
+      <div className="container space-y-10">
+       <FTSectionTitle title="Explore Our Fitness Categories" subtitle="Categories" />
         <div className="grid gap-5 grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
           {categoriesData?.map((category) => (
             <div
@@ -132,10 +130,8 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="container">
-        <h2 className="text-3xl font-semibold mb-7 text-center">
-          Discover Our <span className="text-indigo-500">Top Picks</span>
-        </h2>
+      <div className="container space-y-10">
+        <FTSectionTitle title="Discover OurTop Picks" subtitle="Top Picks" />
         <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {data?.data?.length && !isLoading
             ? data?.data
@@ -153,10 +149,7 @@ const Home = () => {
         </div>
 
         <div className="order-2 md:order-1 space-y-3">
-          <h3 className="text-3xl font-semibold">
-            Start <span className="text-indigo-600">Your Fitness Journey</span>{" "}
-            with Us
-          </h3>
+          <FTSectionTitle title="Start Your Fitness Journey." subtitle="Why Us?" />
           <p className="text-slate-600 text-base">
             Discover the Advantages of Choosing Our Fitness Equipment Begin your
             path to a healthier, stronger you with our top-tier fitness
@@ -206,11 +199,8 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="container">
-        <h2 className="text-3xl font-semibold mb-7 text-center">
-          Real Stories from{" "}
-          <span className="text-indigo-600">Our Community</span>
-        </h2>
+      <div className="container space-y-10">
+        <FTSectionTitle title="Real Stories from Our Community." subtitle="Community" />
         <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-center grid-flow-dense">
           {mosaicImages?.map(({ id, rowSpan, image }) => (
             <div

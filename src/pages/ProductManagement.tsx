@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 import { useDisclosure } from "@nextui-org/react";
 import FTPlus from "../assets/icons/FTPlus";
 import ProductsTable from "../components/modules/ProductManagement/ProductsTable";
@@ -9,7 +10,7 @@ import FTSelect from "../components/ui/FTSelect";
 import FTSelectItem from "../components/ui/FTSelectItem";
 import formInputs from "../assets/data/formInputs";
 import FTAlert from "../assets/icons/FTAlert";
-import { ChangeEvent, useState } from "react";
+import { FocusEvent, useState } from "react";
 import FTModal from "../components/ui/FTModal";
 import { TProduct } from "../redux/features/Product";
 import DetailsContainer from "../components/modules/SingleProduct/DetailsContainer";
@@ -20,6 +21,7 @@ import {
   useEditProductMutation,
 } from "../redux/api";
 import useHotToast from "../hooks/useHotToast";
+import Swal from "sweetalert2";
 
 const initialProduct = {
   specifications: {
@@ -45,9 +47,9 @@ const ProductManagement = () => {
   const { onClose, onOpen, isOpen } = useDisclosure();
   const { ftToast } = useHotToast();
   const [modalTitle, setModalTitle] = useState<string>("");
-  const [createProduct, createResponse] = useCreateProductMutation();
-  const [editProduct, editResponse] = useEditProductMutation();
-  const [deleteProduct, deleteResponse] = useDeleteProductMutation();
+  const [createProduct] = useCreateProductMutation();
+  const [editProduct] = useEditProductMutation();
+  const [deleteProduct] = useDeleteProductMutation();
   const [action, setAction] = useState<"edit" | "create">();
   const [product, setProduct] = useState<TProduct>(initialProduct);
   const {
@@ -63,7 +65,7 @@ const ProductManagement = () => {
     setAction("create");
   };
 
-  const handleActions = async (
+  const handleActions = (
     action: "edit" | "delete" | "details",
     payload?: TProduct
   ) => {
@@ -76,10 +78,29 @@ const ProductManagement = () => {
       setModalTitle("Update Product");
     }
     if (action === "delete") {
-      const res = await deleteProduct(payload?._id as string);
-      if (res?.data?.success) {
-        ftToast("success", "Success", "Product deleted successfully!");
-      }
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Your product will be permanently removed and you will not be able to recover it.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        customClass: {
+          confirmButton: "!bg-indigo-600",
+          cancelButton: "!bg-red-500",
+          container: "!bg-indigo-600/10 backdrop-blur-sm",
+          title: "text-slate-700",
+          footer: "",
+        },
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const res = await deleteProduct(payload?._id as string);
+          if (res?.data?.success) {
+            ftToast("success", "Success", "Product deleted successfully!");
+          }else {
+            ftToast("error", "Error", "Failed to delete the product.");
+          }
+        }
+      });
     }
     if (action === "details") {
       setProduct(payload as TProduct);
@@ -88,7 +109,7 @@ const ProductManagement = () => {
   };
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const name = e?.target?.name;
     const value = e?.target?.value;
@@ -166,10 +187,10 @@ const ProductManagement = () => {
       >
         <div className="space-y-14 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-5 md:gap-y-7 p-0 md:p-6">
           {formInputs?.map((formInput) => {
-            const name: string = formInput?.props?.name ?? "";
-            const placeholder = formInput?.props?.placeholder ?? "";
-            const label = formInput?.props?.label ?? "";
-            const description = formInput?.props?.description ?? "";
+            const name: string = formInput?.props?.name;
+            const placeholder = formInput?.props?.placeholder;
+            const label = formInput?.props?.label;
+            const description = formInput?.props?.description;
             let defaultSelectedKeys: string[] = [];
             let defaultValue: string = "";
 

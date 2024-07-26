@@ -3,6 +3,7 @@ import {
   AccordionItem,
   Checkbox,
   CheckboxGroup,
+  Divider,
   Radio,
   RadioGroup,
 } from "@nextui-org/react";
@@ -15,12 +16,15 @@ import FTBreadcrumbs from "../components/ui/FTBreadcrumbs";
 import { useGetProductsQuery } from "../redux/api";
 import { TProduct } from "../redux/features/Product";
 import { useLocation } from "react-router-dom";
+import FTInput from "../components/ui/FTInput";
+import FTEmptyCard from "../components/ui/FTEmptyCard";
 
 const Products = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(4000);
   const [categories, setCategories] = useState<string[]>([]);
   const [sort, setSort] = useState<string>("ascending");
+  const [search, setSearch] = useState<string>("");
   const location = useLocation();
   const categoryFromLocation = location?.search?.substring(1)?.split("=")[1];
 
@@ -28,6 +32,7 @@ const Products = () => {
     useGetProductsQuery({
       minPrice,
       maxPrice,
+      search: search.trim(),
       categories: categories?.join(","),
       sort: sort === "ascending" ? 1 : -1,
     }) ?? {};
@@ -53,7 +58,6 @@ const Products = () => {
     }
   };
 
-  
   return (
     <div>
       <FTBreadcrumbs />
@@ -173,26 +177,45 @@ const Products = () => {
           </div>
         </div>
         {/* Products part */}
-        <div className="col-span-1 sm:col-span-2 lg:col-span-3 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="col-span-3 ">
-            <div className="py-3 flex items-center justify-between border-b border-b-slate-200">
-              <h3 className="text-3xl font-bold">Products</h3>
-              <span className="text-slate-500">
-                Showing{" "}
-                <span className="text-black">1-{data?.data?.length}</span> of{" "}
-                <span className="text-black">{data?.data?.length}</span>{" "}
-                Products
-              </span>
+        <div className="col-span-1 items-start sm:col-span-2 lg:col-span-3">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="col-span-3 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-3xl font-bold">Products</h3>
+                <span className="text-slate-500">
+                  Showing{" "}
+                  <span className="text-black">1-{data?.data?.length}</span> of{" "}
+                  <span className="text-black">{data?.data?.length}</span>{" "}
+                  Products
+                </span>
+              </div>
+              <Divider />
+              <div>
+                <FTInput
+                  onChange={(e) => setSearch(e.target.value)}
+                  fullWidth
+                  aria-label="search-products"
+                  placeholder="Write name for search product."
+                />
+              </div>
             </div>
-          </div>
-          {
-            // products?.data?.map()
-            !isLoading
-              ? data?.data?.map((product: TProduct) => (
+            {
+              // products?.data?.map()
+              !data?.data?.length ? (
+                <div className="col-span-3">
+                  <FTEmptyCard
+                    title="Products Not Found!"
+                    description="We couldn't find any products matching your criteria. Please adjust your search or browse our categories."
+                    key="products_not_found"
+                  />
+                </div>
+              ) : !isLoading ? (
+                data?.data?.map((product: TProduct) => (
                   <FTGridProductCard key={product?._id} product={product} />
                 ))
-              : null
-          }
+              ) : null
+            }
+          </div>
         </div>
       </div>
     </div>

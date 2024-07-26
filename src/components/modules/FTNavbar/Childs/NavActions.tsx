@@ -11,12 +11,12 @@ import FTUsers from "../../../../assets/icons/FTUsers";
 import FTList from "../../../../assets/icons/FTList";
 import FTSettings from "../../../../assets/icons/FTSettings";
 import SearchBox from "./SearchBox";
+import Swal from "sweetalert2";
 import useHotToast from "../../../../hooks/useHotToast";
 
 const NavActions = () => {
-  const navigate = useNavigate();
   const { ftToast } = useHotToast();
-
+  const navigate = useNavigate();
   const renderStartIcon = (key: string) => {
     if (key === "home") {
       return FTHome;
@@ -29,22 +29,25 @@ const NavActions = () => {
     }
   };
 
-  const handleToast = () => {
-    ftToast(
-      "success",
-      "Success",
-      "Order Placed Successfully. Thank you for shopping with us."
-    );
-    ftToast(
-      "warning",
-      "Warning",
-      "Order will not delivered in this pincode. Try other pincode"
-    );
-    ftToast(
-      "error",
-      "Error",
-      "Payment for order could not be proceed. Please try again."
-    );
+  const handleUse = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      customClass: {
+        confirmButton: "!bg-indigo-600",
+        cancelButton: "!bg-red-500",
+        container: '!bg-indigo-600/10 backdrop-blur-sm',
+        title: 'text-slate-700',
+        footer: ''
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        ftToast("success", "Success", "Product Deleted Successfully!");
+      }
+    });
   };
 
   return (
@@ -69,12 +72,12 @@ const NavActions = () => {
       </div>
       <div>
         <FTButton
-          onPress={handleToast}
           size="lg"
           color="secondary"
           isIconOnly
           className="group"
           disableRipple
+          onPress={handleUse}
         >
           <FTUser
             classNames={{

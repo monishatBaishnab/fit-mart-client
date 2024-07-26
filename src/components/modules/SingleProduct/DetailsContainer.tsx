@@ -11,6 +11,7 @@ import { useState } from "react";
 import { addProductToCart, TCart } from "../../../redux/features/Cart";
 import useCartAction from "../../../hooks/useCartAction";
 import useHotToast from "../../../hooks/useHotToast";
+import { motion } from "framer-motion";
 
 const DetailsContainer = ({
   product,
@@ -157,7 +158,11 @@ const DetailsContainer = ({
               title="Manufacturer"
               className="data-[focus-visible=true]:!outline-none"
             >
-              <div className="inline-grid grid-cols-6 gap-2">
+              <motion.div
+                initial={{ opacity: 0, y: 5 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="inline-grid grid-cols-6 gap-2"
+              >
                 <span className="text-slate-500 font-medium col-span-2">
                   Name
                 </span>
@@ -182,14 +187,18 @@ const DetailsContainer = ({
                 <span className="col-span-4 text-slate-800">
                   {product?.manufacturerDetails?.contactInfo?.phone}
                 </span>
-              </div>
+              </motion.div>
             </Tab>
             <Tab
               key="Specification"
               title="Specification"
               className="data-[focus-visible=true]:!outline-none"
             >
-              <div className="space-y-2">
+              <motion.div
+                initial={{ opacity: 0, y: 5 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="space-y-2"
+              >
                 {Object.keys(product?.specifications)?.map((item: string) => (
                   <span
                     key={item}
@@ -199,14 +208,18 @@ const DetailsContainer = ({
                     {(product?.specifications as Record<string, string>)[item]}
                   </span>
                 ))}
-              </div>
+              </motion.div>
             </Tab>
             <Tab
               key="Features"
               title="Features"
               className="data-[focus-visible=true]:!outline-none"
             >
-              <div className="space-y-2">
+              <motion.div
+                initial={{ opacity: 0, y: 5 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="space-y-2"
+              >
                 {product?.features?.map((feature) => (
                   <span
                     key={feature}
@@ -215,7 +228,7 @@ const DetailsContainer = ({
                     <FTCheckRound /> {feature}
                   </span>
                 ))}
-              </div>
+              </motion.div>
             </Tab>
           </Tabs>
         </div>

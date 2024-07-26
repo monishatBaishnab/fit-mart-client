@@ -13,7 +13,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <Provider store={store}>
       <NextUIProvider>
         <RouterProvider router={routes} />
-        <Toaster position="top-right" />
+        <Toaster containerStyle={{top: '88px'}} position="top-right" />
       </NextUIProvider>
     </Provider>
   </React.StrictMode>
