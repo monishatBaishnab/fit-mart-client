@@ -72,6 +72,7 @@ const formInputs = [
       placeholder: "Select return policy...",
       label: "Return Policy",
       options: [
+        { key: "10", label: "10 Days" },
         { key: "15", label: "15 Days" },
         { key: "20", label: "20 Days" },
         { key: "25", label: "25 Days" },

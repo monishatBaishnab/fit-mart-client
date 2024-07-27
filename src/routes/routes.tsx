@@ -6,6 +6,7 @@ import ProductsDetails from "../pages/ProductsDetails";
 import ProductManagement from "../pages/ProductManagement";
 import About from "../pages/About";
 import Cart from "../pages/Cart";
+import Checkout from "../pages/Checkout";
 
 export const navLinks = [
     {
@@ -58,6 +59,10 @@ export const routes = createBrowserRouter([
             {
                 path: 'cart',
                 element: <Cart />
+            },
+            {
+                path: 'checkout',
+                element: <Checkout />
             }
         ]
     }

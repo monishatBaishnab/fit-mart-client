@@ -6,6 +6,7 @@
  *
  */
 
+import { Input, Textarea } from "@nextui-org/react";
 import FTDurability from "../assets/icons/FTDurability";
 import FTQuality from "../assets/icons/FTQuality";
 import FTUserFriendly from "../assets/icons/FTUserFriendly";
@@ -13,8 +14,45 @@ import AboutUs from "../components/modules/About/AboutUs";
 import QuestionsAndAnswers from "../components/modules/About/QuestionsAndAnswers";
 import FTBreadcrumbs from "../components/ui/FTBreadcrumbs";
 import FTSectionTitle from "../components/ui/FTSectionTitle";
+import FTButton from "../components/ui/FTButton";
+import FTArrowRight from "../assets/icons/FTArrowRight";
+import { ChangeEvent, useState } from "react";
+import useHotToast from "../hooks/useHotToast";
 
 const About = () => {
+  const { ftToast } = useHotToast();
+  const [messageData, setMessageData] = useState({
+    name: "",
+    email: "",
+    mobile: "",
+    message: "",
+  });
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setMessageData((prev) => ({
+      ...prev,
+      [e?.target?.name]: e?.target?.value,
+    }));
+  };
+
+  const handleSendMessage = () => {
+    if (messageData?.email && messageData?.message && messageData?.name) {
+      ftToast("success", "Success", "Your message has been successfully sent.");
+      setMessageData({
+        name: "",
+        email: "",
+        mobile: "",
+        message: "",
+      });
+    } else {
+      ftToast(
+        "error",
+        "Error",
+        "Failed to send your message. Please ensure all required fields are completed."
+      );
+    }
+  };
+
   return (
     <div>
       <FTBreadcrumbs />
@@ -26,7 +64,7 @@ const About = () => {
               classNames={{
                 title: "text-white",
                 subtitle: "text-white",
-                icon: {path: 'stroke-white', wrapper: 'bg-indigo-600/50'},
+                icon: { path: "stroke-white", wrapper: "bg-indigo-600/50" },
               }}
               subtitle="FitMart Product Features"
               title="Benefits of FitMart's Premium Fitness Equipment"
@@ -54,7 +92,60 @@ const About = () => {
           </div>
         </div>
       </div>
+
+      {/* FAQ Questions Section */}
       <QuestionsAndAnswers />
+
+      {/* Contact Information */}
+      <div className="container !max-w-screen-md space-y-5">
+        <div className="w-full">
+          <FTSectionTitle
+            title="Get in touch with us. We're here to assist you."
+            subtitle="Get Started"
+          />
+        </div>
+        <div className="space-y-3">
+          <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+            <Input
+              value={messageData?.name}
+              onChange={(e) => handleChange(e)}
+              variant="underlined"
+              placeholder="Your Name"
+              name="name"
+            />
+            <Input
+              value={messageData?.email}
+              onChange={(e) => handleChange(e)}
+              variant="underlined"
+              placeholder="Email Address"
+              name="email"
+            />
+            <Input
+              value={messageData?.mobile}
+              onChange={(e) => handleChange(e)}
+              variant="underlined"
+              placeholder="Mobile Number (Optional)"
+              name="mobile"
+            />
+          </div>
+          <div>
+            <Textarea
+              value={messageData?.message}
+              onChange={(e) => handleChange(e)}
+              variant="underlined"
+              name="message"
+              placeholder="Message"
+            />
+          </div>
+          <FTButton
+            onPress={handleSendMessage}
+            color="primary"
+            endContent={<FTArrowRight classNames={{ path: "stroke-white" }} />}
+          >
+            Leave us a Message
+          </FTButton>
+        </div>
+      </div>
     </div>
   );
 };

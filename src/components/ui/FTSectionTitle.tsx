@@ -49,7 +49,7 @@ const FTSectionTitle = ({
         </div>
         <h5 className={`text-lg text-slate-700 font-medium ${classNames?.subtitle}`}>{subtitle}</h5>
       </div>
-      <h2 className={`text-4xl text-slate-900 font-semibold ${classNames?.title}`}>{title}</h2>
+      <h2 className={`text-2xl md:text-4xl text-slate-900 font-semibold ${classNames?.title}`}>{title}</h2>
     </div>
   );
 };

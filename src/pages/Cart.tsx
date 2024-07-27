@@ -1,28 +1,20 @@
-import { useState } from "react";
 import FTBreadcrumbs from "../components/ui/FTBreadcrumbs";
 import FTButton from "../components/ui/FTButton";
 import FTEmptyCard from "../components/ui/FTEmptyCard";
 import FTListProductCard from "../components/ui/FTListProductCard";
-import FTSelect from "../components/ui/FTSelect";
-import FTSelectItem from "../components/ui/FTSelectItem";
-import { useCreatePurchaseMutation, useGetProductsQuery } from "../redux/api";
-import {
-  deleteAllProductFromCart,
-  deleteProductFromCart,
-  TCart,
-} from "../redux/features/Cart";
+import { useGetProductsQuery } from "../redux/api";
+import { deleteProductFromCart, TCart } from "../redux/features/Cart";
 import { TProduct } from "../redux/features/Product";
 import useCartAction from "../hooks/useCartAction";
 import useHotToast from "../hooks/useHotToast";
-import { Divider } from "@nextui-org/react";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const { ftToast } = useHotToast();
+  const navigate = useNavigate();
   const { data: products, isLoading, isError } = useGetProductsQuery(undefined);
-  const { carts, dispatch } = useCartAction();
-  const [paymentMethod, setPaymentMethod] = useState("cash_on_delivery");
-  const [createPurchase] = useCreatePurchaseMutation();
+  const { carts, dispatch, totalPrice } = useCartAction();
   let cartProducts: TProduct[] = [];
 
   if (!isLoading || !isError) {
@@ -34,11 +26,6 @@ const Cart = () => {
       }
     });
   }
-
-  const totalPrice: number = carts.reduce((price, cart) => {
-    const cartPrice = Number(cart.price) * Number(cart.quantity);
-    return (price += cartPrice);
-  }, 0);
 
   const handleAction = (id: string) => {
     Swal.fire({
@@ -59,36 +46,8 @@ const Cart = () => {
         dispatch(deleteProductFromCart(id));
 
         ftToast("success", "Success", "Product removed from your cart.");
-
       }
     });
-  };
-
-  const handleConfirmOrder = async () => {
-    const cartsData = {
-      user: "user_one",
-      paymentMethod,
-      totalPrice: totalPrice + 15,
-      products: carts,
-    };
-    if (carts?.length < 1) {
-      ftToast(
-        "error",
-        "Error",
-        "Cannot place an order. Your cart is currently empty."
-      );
-      return;
-    }
-    const res = await createPurchase(cartsData);
-
-    if (res?.data?.success) {
-      dispatch(deleteAllProductFromCart());
-      ftToast(
-        "success",
-        "Success",
-        "Your order has been approved and is being processed."
-      );
-    }
   };
 
   return (
@@ -141,37 +100,28 @@ const Cart = () => {
                   <span className="text-red-500">0.00$</span>
                 </h5>
                 <h5 className="text-slate-500 flex items-center justify-between font-medium">
-                  <span>Delivery Fee</span>{" "}
-                  <span className="text-slate-900">15.00$</span>
-                </h5>
-                <Divider orientation="horizontal" />{" "}
-                <h5 className="flex items-center justify-between font-medium text-slate-900">
                   <span>Total</span>{" "}
-                  <span>{(totalPrice + 15).toFixed(2)}$</span>
+                  <span className="text-slate-900">
+                    {totalPrice.toFixed(2)}$
+                  </span>
                 </h5>
-              </div>
-              <div>
-                <FTSelect
-                  // onChange={(e) => handleChange(e)}
-                  name="payment-type"
-                  placeholder="Select a payment type."
-                  aria-labelledby="payment-method"
-                  defaultSelectedKeys={["cash_on_delivery"]}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                >
-                  <FTSelectItem key="cash_on_delivery">
-                    Cash On Delivery
-                  </FTSelectItem>
-                </FTSelect>
               </div>
               <FTButton
                 fullWidth
-                onPress={handleConfirmOrder}
+                onPress={() => {
+                  carts?.length > 0
+                    ? navigate("/checkout")
+                    : ftToast(
+                        "error",
+                        "Error",
+                        "Your cart is currently empty."
+                      );
+                }}
                 color="primary"
                 size="lg"
                 className="!mt-5"
               >
-                Confirm Order
+                Proceed to Checkout
               </FTButton>
             </div>
           </div>

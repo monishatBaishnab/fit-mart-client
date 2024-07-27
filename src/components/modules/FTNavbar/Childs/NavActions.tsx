@@ -11,11 +11,8 @@ import FTUsers from "../../../../assets/icons/FTUsers";
 import FTList from "../../../../assets/icons/FTList";
 import FTSettings from "../../../../assets/icons/FTSettings";
 import SearchBox from "./SearchBox";
-import Swal from "sweetalert2";
-import useHotToast from "../../../../hooks/useHotToast";
 
 const NavActions = () => {
-  const { ftToast } = useHotToast();
   const navigate = useNavigate();
   const renderStartIcon = (key: string) => {
     if (key === "home") {
@@ -27,27 +24,6 @@ const NavActions = () => {
     } else {
       return FTSettings;
     }
-  };
-
-  const handleUse = () => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-      customClass: {
-        confirmButton: "!bg-indigo-600",
-        cancelButton: "!bg-red-500",
-        container: '!bg-indigo-600/10 backdrop-blur-sm',
-        title: 'text-slate-700',
-        footer: ''
-      },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        ftToast("success", "Success", "Product Deleted Successfully!");
-      }
-    });
   };
 
   return (
@@ -77,7 +53,6 @@ const NavActions = () => {
           isIconOnly
           className="group"
           disableRipple
-          onPress={handleUse}
         >
           <FTUser
             classNames={{

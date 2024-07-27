@@ -18,6 +18,7 @@ import { TProduct } from "../redux/features/Product";
 import { useLocation } from "react-router-dom";
 import FTInput from "../components/ui/FTInput";
 import FTEmptyCard from "../components/ui/FTEmptyCard";
+import useDebounce from "../hooks/useDebounce";
 
 const Products = () => {
   const [minPrice, setMinPrice] = useState(0);
@@ -25,6 +26,7 @@ const Products = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [sort, setSort] = useState<string>("ascending");
   const [search, setSearch] = useState<string>("");
+  const debouncedValue = useDebounce(search, 300);
   const location = useLocation();
   const categoryFromLocation = location?.search?.substring(1)?.split("=")[1];
 
@@ -32,7 +34,7 @@ const Products = () => {
     useGetProductsQuery({
       minPrice,
       maxPrice,
-      search: search.trim(),
+      search: debouncedValue.trim(),
       categories: categories?.join(","),
       sort: sort === "ascending" ? 1 : -1,
     }) ?? {};

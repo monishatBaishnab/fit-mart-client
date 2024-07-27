@@ -12,7 +12,8 @@ import useHotToast from "../../hooks/useHotToast";
 const FTGridProductCard = ({ product }: { product: TProduct }) => {
   const { ftToast } = useHotToast();
   const navigate = useNavigate();
-  const { dispatch, availableQuantity, isExists } = useCartAction(product);
+  const { dispatch, availableQuantity, cartQuantity, isExists } =
+    useCartAction(product);
 
   const handleCartAction = () => {
     if (availableQuantity < 1) {
@@ -20,6 +21,14 @@ const FTGridProductCard = ({ product }: { product: TProduct }) => {
         "error",
         "Error",
         "Sorry, this product is currently out of stock."
+      );
+      return;
+    }
+    if (cartQuantity >= 10) {
+      ftToast(
+        "error",
+        "Error",
+        "You have reached the maximum quantity limit for this item."
       );
       return;
     }

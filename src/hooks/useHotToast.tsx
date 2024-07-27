@@ -12,8 +12,8 @@ const useHotToast = () => {
     description: string
   ) => {
     const ftVariants = {
-      open: { opacity: 1, scale: 1, y: 0 },
-      closed: { opacity: 0, scale: 0.95, y: -50 },
+      open: { opacity: 1, scale: 1, x: 0 },
+      closed: { opacity: 0, scale: 0.95, x: 40 },
     };
     const variantClasses = {
       success: " bg-green-50 border-l-green-400 border-green-400",
@@ -23,12 +23,12 @@ const useHotToast = () => {
     const variantIcons = {
       success: (
         <FTCheckRoundTwo
-          classNames={{ path: "stroke-green-400", svg: "h-9 w-9" }}
+          classNames={{ path: "stroke-green-400", svg: "h-7 w-7" }}
         />
       ),
       warning: (
         <FTWarningRound
-          classNames={{ path: "stroke-orange-400", svg: "h-9 w-9" }}
+          classNames={{ path: "stroke-orange-400", svg: "h-7 w-7" }}
         />
       ),
       error: (
@@ -44,7 +44,7 @@ const useHotToast = () => {
         animate={t.visible ? "open" : "closed"}
       >
         <div
-          className={`relative max-w-[400px] flex items-center gap-5 px-5 py-3 rounded-md border border-l-4 ${variantClasses[variant]}`}
+          className={`relative max-w-[400px] flex items-center gap-5 px-5 py-3 rounded-md border border-l-5 ${variantClasses[variant]}`}
         >
           <div>
             {variantIcons[variant]}

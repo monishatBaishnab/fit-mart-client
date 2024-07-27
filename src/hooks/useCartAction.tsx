@@ -26,12 +26,17 @@ const useCartAction = (product?: TProduct) => {
     availableQuantity -= cartQuantity;
   }
 
+  const totalPrice: number = carts.reduce((price, cart) => {
+    const cartPrice = Number(cart.price) * Number(cart.quantity);
+    return (price += cartPrice);
+  }, 0);
   return {
     dispatch,
     carts,
     productQuantity,
     cartQuantity,
     availableQuantity,
+    totalPrice,
     isExists: Object.keys(isExistsProductOnCart ?? {}).length ? true : false
   };
 };

@@ -4,8 +4,8 @@ import { TProduct } from "./features/Product";
 export const ftApi = createApi({
   reducerPath: "Product",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://fit-mart-server-phi.vercel.app/",
-    // baseUrl: "http://localhost:5000/",
+    // baseUrl: "https://fit-mart-server-phi.vercel.app/",
+    baseUrl: "http://localhost:5000/",
   }),
   tagTypes: ["getProducts", "getProduct"],
   endpoints: (builder) => {

@@ -21,9 +21,9 @@ const DetailsContainer = ({
   actionButtons?: boolean;
 }) => {
   const { ftToast } = useHotToast();
-  const { dispatch, availableQuantity, isExists } = useCartAction(product);
+  const { dispatch, availableQuantity, isExists, cartQuantity } = useCartAction(product);
   const [quantity, setQuantity] = useState<number>(1);
-
+  
   // Create function for handle cart action, create | increase
   const handleCartAction = () => {
     // If current product quantity less then quantity show error message and return;
@@ -35,7 +35,14 @@ const DetailsContainer = ({
       );
       return;
     }
-
+    if(cartQuantity >= 10){
+      ftToast(
+        "error",
+        "Error",
+        "You have reached the maximum quantity limit for this item."
+      );
+      return;
+    }
     const cartData: TCart = {
       product: product._id as string,
       price: Number(product.price),

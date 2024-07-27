@@ -9,12 +9,16 @@ import { useGetProductsQuery } from "../../../../redux/api";
 import { useState } from "react";
 import { TProduct } from "../../../../redux/features/Product";
 import { useNavigate } from "react-router-dom";
+import useDebounce from "../../../../hooks/useDebounce";
 const SearchBox = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [search, setSearch] = useState<string>("");
-  const { data, isLoading } =
-    useGetProductsQuery({ search: search ? search : " " }) ?? {};
+  const debouncedValue = useDebounce(search, 300);
+  
+  const { data, isLoading } = useGetProductsQuery({
+    search: debouncedValue ? debouncedValue : " ",
+  });
 
   const handleAction = (id: string) => {
     navigate(`/products/${id}`);
@@ -70,8 +74,8 @@ const SearchBox = () => {
                   key={product?._id}
                   product={product}
                   actionButton={{
-                    action: 'details',
-                    handleAction
+                    action: "details",
+                    handleAction,
                   }}
                 />
               ))
