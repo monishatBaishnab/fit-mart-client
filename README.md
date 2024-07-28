@@ -1,4 +1,5 @@
 ## FitMart: Your Ultimate Fitness Equipment Store
+[Live Link](https://fit-mart-66e82.web.app/)
 
 FitMart is a showcase project designed to demonstrate advanced web development skills. It highlights proficiency in modern technologies and best practices for building a full-featured e-commerce platform. This project offers an intuitive and engaging user experience, robust product management, and secure payment processing, providing a clear view of my technical capabilities to potential recruiters.
 
