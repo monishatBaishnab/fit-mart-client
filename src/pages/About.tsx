@@ -18,6 +18,7 @@ import FTButton from "../components/ui/FTButton";
 import FTArrowRight from "../assets/icons/FTArrowRight";
 import { ChangeEvent, useState } from "react";
 import useHotToast from "../hooks/useHotToast";
+import Customer from "../components/modules/About/Customer";
 
 const About = () => {
   const { ftToast } = useHotToast();
@@ -95,6 +96,9 @@ const About = () => {
 
       {/* FAQ Questions Section */}
       <QuestionsAndAnswers />
+
+      {/* Customer section */}
+      <Customer />
 
       {/* Contact Information */}
       <div className="container !max-w-screen-md space-y-5">

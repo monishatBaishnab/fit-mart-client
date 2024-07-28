@@ -1,4 +1,4 @@
-import { Modal, ModalBody, ModalContent } from "@nextui-org/react";
+import { Modal, ModalBody, ModalContent, Spinner } from "@nextui-org/react";
 import FTButton from "./FTButton";
 import FTClose from "../../assets/icons/FTClose";
 import FTSave from "../../assets/icons/FTSave";
@@ -26,6 +26,7 @@ type TFTModal = {
     label?: string;
     handleSave?: () => unknown;
     icon?: ReactNode;
+    saveLoading?: boolean;
   };
   children: ReactNode;
 };
@@ -95,7 +96,9 @@ const FTModal = ({
                   onPress={saveButton?.handleSave}
                   type="button"
                   endContent={
-                    saveButton?.icon ? (
+                    saveButton?.saveLoading ? (
+                      <Spinner size="sm" color="white" />
+                    ) : saveButton?.icon ? (
                       saveButton?.icon
                     ) : (
                       <FTSave classNames={{ path: "stroke-white" }} />

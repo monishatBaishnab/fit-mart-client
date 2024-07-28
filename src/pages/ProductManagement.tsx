@@ -10,7 +10,7 @@ import FTSelect from "../components/ui/FTSelect";
 import FTSelectItem from "../components/ui/FTSelectItem";
 import formInputs from "../assets/data/formInputs";
 import FTAlert from "../assets/icons/FTAlert";
-import { FocusEvent, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import FTModal from "../components/ui/FTModal";
 import { TProduct } from "../redux/features/Product";
 import DetailsContainer from "../components/modules/SingleProduct/DetailsContainer";
@@ -45,6 +45,7 @@ const initialProduct = {
 
 const ProductManagement = () => {
   const { onClose, onOpen, isOpen } = useDisclosure();
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const { ftToast } = useHotToast();
   const [modalTitle, setModalTitle] = useState<string>("");
   const [createProduct] = useCreateProductMutation();
@@ -96,7 +97,7 @@ const ProductManagement = () => {
           const res = await deleteProduct(payload?._id as string);
           if (res?.data?.success) {
             ftToast("success", "Success", "Product deleted successfully!");
-          }else {
+          } else {
             ftToast("error", "Error", "Failed to delete the product.");
           }
         }
@@ -109,7 +110,7 @@ const ProductManagement = () => {
   };
 
   const handleChange = (
-    e: FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const name = e?.target?.name;
     const value = e?.target?.value;
@@ -136,7 +137,7 @@ const ProductManagement = () => {
   };
 
   const handleSave = async () => {
-    console.log(action);
+    setSaveLoading(true);
     const manufacturerDetails = findManufacturerDetails(product?.brand);
     if (action === "edit") {
       const res = await editProduct({
@@ -144,11 +145,13 @@ const ProductManagement = () => {
         id: product?._id as string,
       });
       if (res?.data?.success) {
+        setSaveLoading(false);
         ftToast("success", "Success", "Product updated successfully!");
       }
     } else if (action === "create") {
       const res = await createProduct({ ...product, manufacturerDetails });
       if (res?.data?.success) {
+        setSaveLoading(false);
         ftToast("success", "Success", "Product created successfully!");
       }
     }
@@ -180,7 +183,7 @@ const ProductManagement = () => {
         actions={{ isOpen, onClose, onOpen }}
         cancelButton={{ status: true, label: "Cancel" }}
         name="product-management-modal"
-        saveButton={{ status: true, label: "Save", handleSave }}
+        saveButton={{ status: true, label: "Save", handleSave, saveLoading }}
         size="3xl"
         title={modalTitle}
         key="product-management-modal"
@@ -195,12 +198,13 @@ const ProductManagement = () => {
             let defaultValue: string = "";
 
             if (name) {
-              if ([product[name]]) {
-                defaultSelectedKeys = [product[name]];
-                defaultValue = product[name];
-              }
-              if (!product?.[name]) {
-                defaultValue = product?.specifications[name];
+              const productValue = product[name as keyof TProduct] as string | undefined;
+              
+              if (productValue) {
+                defaultSelectedKeys = [productValue];
+                defaultValue = productValue;
+              } else {
+                defaultValue = product.specifications[name as keyof typeof product.specifications] || "";
               }
             }
 
@@ -229,7 +233,7 @@ const ProductManagement = () => {
               >
                 <FTInput
                   defaultValue={defaultValue}
-                  onBlur={(e) => handleChange(e)}
+                  onChange={(e) => handleChange(e)}
                   name={name}
                   placeholder={placeholder}
                   label={label}
@@ -239,7 +243,7 @@ const ProductManagement = () => {
               <div key={name} className="md:col-span-2">
                 <FTTextArea
                   defaultValue={defaultValue}
-                  onBlur={(e) => handleChange(e)}
+                  onChange={(e) => handleChange(e)}
                   name={name}
                   placeholder={placeholder}
                   label={label}

@@ -27,7 +27,7 @@ const FTUserFriendly = () => {
           width="55.0435"
           height="56.0539"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood flood-opacity="0" result="BackgroundImageFix" />
           <feColorMatrix
@@ -62,7 +62,7 @@ const FTUserFriendly = () => {
           width="82.6759"
           height="88.3532"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
           <feFlood flood-opacity="0" result="BackgroundImageFix" />
           <feColorMatrix
